@@ -81,6 +81,13 @@ import SideMenu from './components/SideMenu.vue'
 import ImageGallery from './components/ImageGallery.vue'
 import ImageGalleryFullWidth from './components/ImageGalleryFullWidth.vue'
 import DataTable from './components/DataTable.vue'
+import {
+  loadLoadImages,
+  loadQCImages,
+  loadIntegrateImages,
+  loadPredictionImages,
+  loadAnnotationImages
+} from './utils/assetLoader.js'
 
 // 菜单数据(按01-05模块组织,包含h3子章节)
 const menuData = ref([
@@ -171,7 +178,6 @@ onMounted(() => {
       let bestSection = ''
 
       if (contentArea) {
-        const scrollTop = contentArea.scrollTop
         const viewportHeight = contentArea.clientHeight
 
         // 优先检查subsection
@@ -230,299 +236,31 @@ onUnmounted(() => {
   }
 })
 
-// ============== 01.load 图片数据 ==============
-const loadImageSections = ref([
-  {
-    title: '数据加载',
-    imageGroups: [
-      {
-        groupTitle: '待补充',
-        activeTab: 'default',
-        images: [
-          { tabLabel: '图片1', tabName: 'default', title: '待补充 - 图片1', url: '/src/assets/img/test1.png' },
-        ]
-      }
-    ]
-  }
-])
+// ============== 动态加载图片数据 ==============
+// 01.load 图片数据
+const loadData = loadLoadImages()
+const loadImageSections = ref(loadData.sections)
 
-// ============== 02.qc 图片数据 ==============
-const qcImageSections = ref([
-  {
-    title: '基因数分布',
-    imageGroups: [
-      {
-        groupTitle: '各样本基因数散点图',
-        activeTab: 'sample1',
-        images: [
-          { tabLabel: 'Sample1', tabName: 'sample1', title: 'Sample1 基因数', url: '/src/assets/02.qc/figures/sample1/sample1_scatter_genes.png' },
-          { tabLabel: 'Sample2', tabName: 'sample2', title: 'Sample2 基因数', url: '/src/assets/02.qc/figures/sample2/sample2_scatter_genes.png' },
-          { tabLabel: 'Sample3', tabName: 'sample3', title: 'Sample3 基因数', url: '/src/assets/02.qc/figures/sample3/sample3_scatter_genes.png' },
-          { tabLabel: 'Sample4', tabName: 'sample4', title: 'Sample4 基因数', url: '/src/assets/02.qc/figures/sample4/sample4_scatter_genes.png' },
-          { tabLabel: 'Sample5', tabName: 'sample5', title: 'Sample5 基因数', url: '/src/assets/02.qc/figures/sample5/sample5_scatter_genes.png' },
-          { tabLabel: 'Sample6', tabName: 'sample6', title: 'Sample6 基因数', url: '/src/assets/02.qc/figures/sample6/sample6_scatter_genes.png' },
-        ]
-      }
-    ]
-  },
-  {
-    title: '线粒体基因比例',
-    imageGroups: [
-      {
-        groupTitle: '各样本线粒体基因比例',
-        activeTab: 'sample1_mt',
-        images: [
-          { tabLabel: 'Sample1', tabName: 'sample1_mt', title: 'Sample1 线粒体基因', url: '/src/assets/02.qc/figures/sample1/sample1_scatter_mt.png' },
-          { tabLabel: 'Sample2', tabName: 'sample2_mt', title: 'Sample2 线粒体基因', url: '/src/assets/02.qc/figures/sample2/sample2_scatter_mt.png' },
-          { tabLabel: 'Sample3', tabName: 'sample3_mt', title: 'Sample3 线粒体基因', url: '/src/assets/02.qc/figures/sample3/sample3_scatter_mt.png' },
-          { tabLabel: 'Sample4', tabName: 'sample4_mt', title: 'Sample4 线粒体基因', url: '/src/assets/02.qc/figures/sample4/sample4_scatter_mt.png' },
-          { tabLabel: 'Sample5', tabName: 'sample5_mt', title: 'Sample5 线粒体基因', url: '/src/assets/02.qc/figures/sample5/sample5_scatter_mt.png' },
-          { tabLabel: 'Sample6', tabName: 'sample6_mt', title: 'Sample6 线粒体基因', url: '/src/assets/02.qc/figures/sample6/sample6_scatter_mt.png' },
-        ]
-      }
-    ]
-  },
-  {
-    title: '质量控制过滤',
-    imageGroups: [
-      {
-        groupTitle: 'MAD方法过滤',
-        activeTab: 'mad_sample1',
-        images: [
-          { tabLabel: 'Sample1', tabName: 'mad_sample1', title: 'Sample1 MAD过滤', url: '/src/assets/02.qc/figures/sample1/mad_sample1_scatter_Filter.png' },
-          { tabLabel: 'Sample2', tabName: 'mad_sample2', title: 'Sample2 MAD过滤', url: '/src/assets/02.qc/figures/sample2/mad_sample2_scatter_Filter.png' },
-          { tabLabel: 'Sample3', tabName: 'mad_sample3', title: 'Sample3 MAD过滤', url: '/src/assets/02.qc/figures/sample3/mad_sample3_scatter_Filter.png' },
-        ]
-      },
-      {
-        groupTitle: '手动过滤',
-        activeTab: 'manual_sample1',
-        images: [
-          { tabLabel: 'Sample1', tabName: 'manual_sample1', title: 'Sample1 手动过滤', url: '/src/assets/02.qc/figures/sample1/manual_sample1_scatter_Filter.png' },
-          { tabLabel: 'Sample2', tabName: 'manual_sample2', title: 'Sample2 手动过滤', url: '/src/assets/02.qc/figures/sample2/manual_sample2_scatter_Filter.png' },
-          { tabLabel: 'Sample3', tabName: 'manual_sample3', title: 'Sample3 手动过滤', url: '/src/assets/02.qc/figures/sample3/manual_sample3_scatter_Filter.png' },
-        ]
-      }
-    ]
-  }
-])
+// 02.qc 图片数据
+const qcData = loadQCImages()
+const qcImageSections = ref(qcData.sections)
 
-// ============== 03.integrate 图片数据 ==============
-const integrateImageSections = ref([
-  {
-    title: 'HVG选择',
-    imageGroups: [
-      {
-        groupTitle: '高变基因分析',
-        activeTab: 'hvg_scatter',
-        images: [
-          { tabLabel: '散点图', tabName: 'hvg_scatter', title: 'HVG散点图', url: '/src/assets/03.integrate/figures/3.1.scatter_hvg.png' },
-          { tabLabel: '小提琴图-基因数', tabName: 'violin_genes', title: '基因数分布', url: '/src/assets/03.integrate/figures/3.1.violin_n_genes_by_counts.png' },
-          { tabLabel: '小提琴图-线粒体', tabName: 'violin_mt', title: '线粒体比例分布', url: '/src/assets/03.integrate/figures/3.1.violin_pct_counts_mt.png' },
-        ]
-      }
-    ]
-  },
-  {
-    title: '批次效应校正',
-    imageGroups: [
-      {
-        groupTitle: 'UMAP整合结果',
-        activeTab: 'harmony_umap',
-        images: [
-          { tabLabel: 'Harmony UMAP', tabName: 'harmony_umap', title: 'Harmony整合UMAP', url: '/src/assets/03.integrate/figures/3.4.umap_harmony.png' },
-        ]
-      },
-      {
-        groupTitle: '基因重叠分析',
-        activeTab: 'upset',
-        images: [
-          { tabLabel: 'Upset图', tabName: 'upset', title: '批次间基因重叠', url: '/src/assets/03.integrate/figures/3.0.upset_gene_overlap.png' },
-        ]
-      }
-    ]
-  }
-])
+// 03.integrate 图片数据
+const integrateData = loadIntegrateImages()
+const integrateImageSections = ref(integrateData.sections)
 
-// ============== 04.prediction 图片数据 ==============
-const predictionImageSections = ref([
-  {
-    title: 'CellTypist预测',
-    imageGroups: [
-      {
-        groupTitle: 'CellTypist预测结果',
-        activeTab: 'default',
-        images: [
-          { tabLabel: '待补充', tabName: 'default', title: 'CellTypist预测结果', url: '/src/assets/img/test1.png' },
-        ]
-      }
-    ]
-  },
-  {
-    title: 'SCimilarity预测',
-    imageGroups: [
-      {
-        groupTitle: 'SCimilarity预测结果',
-        activeTab: 'default',
-        images: [
-          { tabLabel: '待补充', tabName: 'default', title: 'SCimilarity预测结果', url: '/src/assets/img/test1.png' },
-        ]
-      }
-    ]
-  },
-  {
-    title: 'starCAT预测',
-    imageGroups: [
-      {
-        groupTitle: 'starCAT预测结果',
-        activeTab: 'default',
-        images: [
-          { tabLabel: '待补充', tabName: 'default', title: 'starCAT预测结果', url: '/src/assets/img/test1.png' },
-        ]
-      }
-    ]
-  }
-])
+// 04.prediction 图片数据 (保持静态)
+const predictionData = loadPredictionImages()
+const predictionImageSections = ref(predictionData.sections)
 
-// ============== 05.annotation 图片数据 ==============
-// 5.1 UMAP可视化
-const annotationUMAPSections = ref([
-  {
-    title: '细胞类型Marker',
-    imageGroups: [
-      {
-        groupTitle: '各细胞类型Marker基因',
-        activeTab: 'Epithelial',
-        images: [
-          { tabLabel: '上皮细胞', tabName: 'Epithelial', title: '上皮细胞Marker', url: '/src/assets/05.annotation/figures/umap_Epithelial_marker.png' },
-          { tabLabel: '免疫细胞', tabName: 'Immune', title: '免疫细胞Marker', url: '/src/assets/05.annotation/figures/umap_Immune_marker.png' },
-          { tabLabel: 'T细胞', tabName: 'T', title: 'T细胞Marker', url: '/src/assets/05.annotation/figures/umap_T_marker.png' },
-          { tabLabel: 'B细胞', tabName: 'B', title: 'B细胞Marker', url: '/src/assets/05.annotation/figures/umap_B_marker.png' },
-          { tabLabel: '髓系细胞', tabName: 'Myeloid', title: '髓系细胞Marker', url: '/src/assets/05.annotation/figures/umap_Myeloid_marker.png' },
-          { tabLabel: 'DC细胞', tabName: 'DC', title: 'DC细胞Marker', url: '/src/assets/05.annotation/figures/umap_DC_marker.png' },
-          { tabLabel: 'NK细胞', tabName: 'NK', title: 'NK细胞Marker', url: '/src/assets/05.annotation/figures/umap_NK_marker.png' },
-          { tabLabel: '内皮细胞', tabName: 'Endothelial', title: '内皮细胞Marker', url: '/src/assets/05.annotation/figures/umap_Endothelial_marker.png' },
-          { tabLabel: '平滑肌细胞', tabName: 'Sooth_muscle', title: '平滑肌细胞Marker', url: '/src/assets/05.annotation/figures/umap_Sooth_muscle_cell_marker.png' },
-          { tabLabel: '成纤维细胞', tabName: 'Fibroblast', title: '成纤维细胞Marker', url: '/src/assets/05.annotation/figures/umap_Fibroblast_marker.png' },
-          { tabLabel: '周细胞', tabName: 'Pericyte', title: '周细胞Marker', url: '/src/assets/05.annotation/figures/umap_Pericyte_marker.png' },
-          { tabLabel: '肥大细胞', tabName: 'Mast', title: '肥大细胞Marker', url: '/src/assets/05.annotation/figures/umap_Mast_marker.png' },
-          { tabLabel: '巨核细胞', tabName: 'Megakaryocyte', title: '巨核细胞Marker', url: '/src/assets/05.annotation/figures/umap_Megakaryocyte_marker.png' },
-          { tabLabel: '浆细胞', tabName: 'Plasma', title: '浆细胞Marker', url: '/src/assets/05.annotation/figures/umap_Plasma_marker.png' },
-          { tabLabel: '中性粒细胞', tabName: 'Neutrophils', title: '中性粒细胞Marker', url: '/src/assets/05.annotation/figures/umap_Neutrophils_marker.png' },
-          { tabLabel: '增殖细胞', tabName: 'Prolifertive', title: '增殖细胞Marker', url: '/src/assets/05.annotation/figures/umap_Prolifertive_marker.png' },
-        ]
-      },
-      {
-        groupTitle: '注释结果',
-        activeTab: 'annotation',
-        images: [
-          { tabLabel: '注释结果', tabName: 'annotation', title: '细胞注释结果', url: '/src/assets/05.annotation/figures/umap_annotation.png' },
-          { tabLabel: '注释标签', tabName: 'annotation_label', title: '细胞注释标签', url: '/src/assets/05.annotation/figures/umap_annotation_label.png' },
-          { tabLabel: 'QC检查', tabName: 'QC_Check', title: 'QC检查', url: '/src/assets/05.annotation/figures/umap_QC_Check.png' },
-        ]
-      }
-    ]
-  }
-])
+// 05.annotation 图片数据
+const annotationData = loadAnnotationImages()
+const annotationUMAPSections = ref(annotationData.umapSections)
+const annotationClusterSections = ref(annotationData.clusterSections)
 
-// 5.2 聚类Marker分析
-const annotationClusterSections = ref([
-  {
-    title: '各簇Top9 Marker',
-    imageGroups: [
-      {
-        groupTitle: '簇0-13 Top9 Marker',
-        activeTab: 'cluster0',
-        images: [
-          { tabLabel: '簇0', tabName: 'cluster0', title: '簇0 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_0_top9_marker.png' },
-          { tabLabel: '簇1', tabName: 'cluster1', title: '簇1 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_1_top9_marker.png' },
-          { tabLabel: '簇2', tabName: 'cluster2', title: '簇2 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_2_top9_marker.png' },
-          { tabLabel: '簇3', tabName: 'cluster3', title: '簇3 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_3_top9_marker.png' },
-          { tabLabel: '簇4', tabName: 'cluster4', title: '簇4 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_4_top9_marker.png' },
-          { tabLabel: '簇5', tabName: 'cluster5', title: '簇5 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_5_top9_marker.png' },
-          { tabLabel: '簇6', tabName: 'cluster6', title: '簇6 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_6_top9_marker.png' },
-          { tabLabel: '簇7', tabName: 'cluster7', title: '簇7 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_7_top9_marker.png' },
-          { tabLabel: '簇8', tabName: 'cluster8', title: '簇8 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_8_top9_marker.png' },
-          { tabLabel: '簇9', tabName: 'cluster9', title: '簇9 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_9_top9_marker.png' },
-          { tabLabel: '簇10', tabName: 'cluster10', title: '簇10 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_10_top9_marker.png' },
-          { tabLabel: '簇11', tabName: 'cluster11', title: '簇11 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_11_top9_marker.png' },
-          { tabLabel: '簇12', tabName: 'cluster12', title: '簇12 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_12_top9_marker.png' },
-          { tabLabel: '簇13', tabName: 'cluster13', title: '簇13 Top9 Marker', url: '/src/assets/05.annotation/figures/umap_cluster_13_top9_marker.png' },
-        ]
-      }
-    ]
-  }
-])
-
-// 5.3 Marker基因热图
-const annotationHeatmapSections = ref([
-  {
-    title: '热图可视化',
-    imageGroups: [
-      {
-        groupTitle: '细胞类型Marker',
-        activeTab: 'heatmap_scaled',
-        images: [
-          { tabLabel: '热图(Scaled)', tabName: 'heatmap_scaled', title: '细胞类型Marker热图', url: '/src/assets/05.annotation/figures/heatmap_celltype_marker_gene_scaled.png' },
-          { tabLabel: '热图(Log1p)', tabName: 'heatmap_log1p', title: '细胞类型Marker热图', url: '/src/assets/05.annotation/figures/heatmap_celltype_marker_gene_log1p.png' },
-        ]
-      },
-      {
-        groupTitle: '矩阵图',
-        activeTab: 'matrixplot_scaled',
-        images: [
-          { tabLabel: '矩阵图(Scaled)', tabName: 'matrixplot_scaled', title: '细胞类型Marker矩阵图', url: '/src/assets/05.annotation/figures/matrixplot_celltype_marker_gene_scaled.png' },
-          { tabLabel: '矩阵图(Log1p)', tabName: 'matrixplot_log1p', title: '细胞类型Marker矩阵图', url: '/src/assets/05.annotation/figures/matrixplot_celltype_marker_gene_log1p.png' },
-        ]
-      },
-      {
-        groupTitle: '其他热图',
-        activeTab: 'violin',
-        images: [
-          { tabLabel: '小提琴图', tabName: 'violin', title: '细胞类型Marker小提琴图', url: '/src/assets/05.annotation/figures/stacked_violin_celltype_marker_gene_log1p.png' },
-          { tabLabel: '轨迹图', tabName: 'tracksplot', title: '细胞类型Marker轨迹图', url: '/src/assets/05.annotation/figures/tracksplot_celltype_marker_gene_log1p.png' },
-        ]
-      }
-    ]
-  },
-  {
-    title: '聚类热图',
-    imageGroups: [
-      {
-        groupTitle: '聚类Marker热图',
-        activeTab: 'cluster_heatmap',
-        images: [
-          { tabLabel: '聚类Top10热图', tabName: 'cluster_heatmap', title: '聚类Top10热图', url: '/src/assets/05.annotation/figures/heatmap_Cluster_top10_heatmap_scaled.png' },
-          { tabLabel: 'Top25基因', tabName: 'top25', title: 'Top25 Marker基因', url: '/src/assets/05.annotation/figures/rank_genes_groups_leiden_harmony_0.4_top25_rank_genes_groups.png' },
-        ]
-      }
-    ]
-  }
-])
-
-// 5.4 其他分析
-const annotationOtherSections = ref([
-  {
-    title: '点图与相关性',
-    imageGroups: [
-      {
-        groupTitle: '点图',
-        activeTab: 'dotplot_celltype',
-        images: [
-          { tabLabel: '细胞类型', tabName: 'dotplot_celltype', title: '细胞类型Marker点图', url: '/src/assets/05.annotation/figures/dotplot_celltype_marker_gene.png' },
-          { tabLabel: '聚类', tabName: 'dotplot_cluster', title: '聚类Top5点图', url: '/src/assets/05.annotation/figures/dotplot_cluster_top5_marker.png' },
-        ]
-      },
-      {
-        groupTitle: '相关性分析',
-        activeTab: 'correlation',
-        images: [
-          { tabLabel: '细胞类型相关性', tabName: 'correlation', title: '细胞类型相关性矩阵', url: '/src/assets/05.annotation/figures/correlation_matrix_celltype_correlation.png' },
-        ]
-      }
-    ]
-  }
-])
+// 热图和其他分析数据已经在 assetLoader.js 中组织好了
+const annotationHeatmapSections = ref(annotationData.heatmapSections)
+const annotationOtherSections = ref(annotationData.otherSections)
 </script>
 
 <style scoped>
