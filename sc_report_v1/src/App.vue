@@ -25,6 +25,17 @@
         <section id="section-02-qc" class="report-section">
           <h2>02. 质量控制</h2>
           <ImageGallery :image-sections="qcImageSections" />
+
+          <!-- CSV 文件展示 - 分开两个独立的 subsection -->
+          <div v-if="qcCSVData.csvFiles.length > 0 && qcCSVData.csvFiles[0]" class="subsection" id="section-02-qc-csv-1">
+            <h3>{{ qcCSVData.csvFiles[0].title }}</h3>
+            <DataTable :csv-path="qcCSVData.csvFiles[0].url" />
+          </div>
+
+          <div v-if="qcCSVData.csvFiles.length > 1 && qcCSVData.csvFiles[1]" class="subsection" id="section-02-qc-csv-2">
+            <h3>{{ qcCSVData.csvFiles[1].title }}</h3>
+            <DataTable :csv-path="qcCSVData.csvFiles[1].url" />
+          </div>
         </section>
 
         <!-- 03.integrate 模块 -->
@@ -90,6 +101,7 @@ import DataTable from './components/DataTable.vue'
 import {
   loadLoadImages,
   loadQCImages,
+  loadQCAnnotationCSV,
   loadIntegrateImages,
   loadPredictionImages,
   loadAnnotationImages,
@@ -109,7 +121,9 @@ const menuData = ref([
     id: '02-qc',
     title: '02. 质量控制',
     items: [
-      { id: 'section-02-qc', title: '质量控制' }
+      { id: 'section-02-qc', title: '质量控制' },
+      { id: 'section-02-qc-csv-1', title: 'cell_number_before_after_QC' },
+      { id: 'section-02-qc-csv-2', title: 'doublets_rate' }
     ]
   },
   {
@@ -258,6 +272,8 @@ const loadImageSections = ref(loadData.sections)
 // 02.qc 图片数据
 const qcData = loadQCImages()
 const qcImageSections = ref(qcData.sections)
+// 02.qc CSV 数据
+const qcCSVData = loadQCAnnotationCSV()
 
 // 03.integrate 图片数据
 const integrateData = loadIntegrateImages()

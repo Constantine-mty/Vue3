@@ -19,6 +19,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  assetsInclude: ['**/*.csv'],
   build: {
     target: 'es2015',
     polyfillModulePreload: true

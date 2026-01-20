@@ -823,3 +823,28 @@ export function loadCompositionalImages() {
     return { title: '组成分析', sections: [] }
   }
 }
+
+/**
+ * 获取 02.qc 章节需要的 CSV 文件（来自 05.annotation/csv）
+ */
+export function loadQCAnnotationCSV() {
+  try {
+    const result = {
+      csvFiles: [
+        {
+          title: 'cell_number_before_after_QC',
+          url: '/src/assets/05.annotation/csv/cell_number_before_after_QC.csv'
+        },
+        {
+          title: 'doublets_rate',
+          url: '/src/assets/05.annotation/csv/doublets_rate.csv'
+        }
+      ]
+    }
+
+    return result
+  } catch (error) {
+    console.error('加载 02.qc CSV 文件失败:', error)
+    return { csvFiles: [] }
+  }
+}
