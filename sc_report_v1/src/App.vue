@@ -70,6 +70,12 @@
             <DataTable csv-path="/src/assets/05.annotation/csv/Scanpy_markers_per_cluster.csv" />
           </div>
         </section>
+
+        <!-- 06.compositional 模块 -->
+        <section id="section-06-compositional" class="report-section">
+          <h2>06. 组成分析</h2>
+          <ImageGallery :image-sections="compositionalSections" />
+        </section>
       </div>
     </div>
   </div>
@@ -86,7 +92,8 @@ import {
   loadQCImages,
   loadIntegrateImages,
   loadPredictionImages,
-  loadAnnotationImages
+  loadAnnotationImages,
+  loadCompositionalImages
 } from './utils/assetLoader.js'
 
 // 菜单数据(按01-05模块组织,包含h3子章节)
@@ -128,6 +135,13 @@ const menuData = ref([
       { id: 'section-05-annotation-heatmap', title: '5.3 Marker基因热图' },
       { id: 'section-05-annotation-other', title: '5.4 其他分析' },
       { id: 'section-05-annotation-table', title: '5.5 Marker基因表' }
+    ]
+  },
+  {
+    id: '06-compositional',
+    title: '06. 组成分析',
+    items: [
+      { id: 'section-06-compositional', title: '组成分析' }
     ]
   }
 ])
@@ -261,6 +275,10 @@ const annotationClusterSections = ref(annotationData.clusterSections)
 // 热图和其他分析数据已经在 assetLoader.js 中组织好了
 const annotationHeatmapSections = ref(annotationData.heatmapSections)
 const annotationOtherSections = ref(annotationData.otherSections)
+
+// 06.compositional 图片数据
+const compositionalData = loadCompositionalImages()
+const compositionalSections = ref(compositionalData.sections)
 </script>
 
 <style scoped>

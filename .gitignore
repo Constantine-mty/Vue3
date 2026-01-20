@@ -1,4 +1,7 @@
 # Node modules
+
+/node_modules/
+
 sc_report_v1/node_modules/
 sc_report_v1/src/assets
 

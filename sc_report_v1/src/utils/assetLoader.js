@@ -686,3 +686,140 @@ export function loadAnnotationImages() {
     return { umapSections: [], clusterSections: [], heatmapSections: [], otherSections: [] }
   }
 }
+
+/**
+ * 获取 06.compositional 模块的图片数据
+ */
+export function loadCompositionalImages() {
+  try {
+    // 筛选出 06.compositional 相关的图片
+    const modules = Object.fromEntries(
+      Object.entries(loadModules).filter(([path]) => path.includes('/06.compositional/'))
+    )
+
+    const result = {
+      title: '组成分析',
+      sections: []
+    }
+
+    // 按文件前缀分组
+    const groups = new Map()
+
+    // 特殊图片组（条件性显示）
+    const specialGroups = new Map()
+
+    Object.keys(modules).forEach(path => {
+      const parsed = parseFilePath(path)
+      if (!parsed.isImage) return
+
+      const filename = parsed.filename
+
+      // 提取文件名前缀 (如 6.1.1.Sample_Percent_in_Cluster -> 6.1.1)
+      const prefixMatch = filename.match(/^(\d+\.\d+\.\d+)\./)
+      if (prefixMatch) {
+        const prefix = prefixMatch[1]
+        const imageUrl = modules[path].default
+        const title = filename.replace(/^[\d.]+\s*/, '').replace(/\.(png|jpg|jpeg|svg|webp)$/, '')
+
+        if (!groups.has(prefix)) {
+          groups.set(prefix, [])
+        }
+
+        groups.get(prefix).push({
+          tabLabel: title,
+          tabName: prefix + '_' + groups.get(prefix).length,
+          title: title,
+          url: imageUrl
+        })
+      } else {
+        // 特殊图片：MiloR_, OR_, Roe_ 开头
+        const specialPrefixMatch = filename.match(/^(MiloR_|OR_|Roe_)/)
+        if (specialPrefixMatch) {
+          const prefix = specialPrefixMatch[1]
+          if (!specialGroups.has(prefix)) {
+            specialGroups.set(prefix, [])
+          }
+
+          const imageUrl = modules[path].default
+          const title = filename.replace(/\.(png|jpg|jpeg|svg|webp)$/, '')
+
+          specialGroups.get(prefix).push({
+            tabLabel: title,
+            tabName: prefix + '_' + specialGroups.get(prefix).length,
+            title: title,
+            url: imageUrl
+          })
+        }
+      }
+    })
+
+    // 定义分组标题映射
+    const groupTitleMap = {
+      '6.1.1': '样本在簇中的比例',
+      '6.1.2': '样本在簇中的数量',
+      '6.2.1': '簇在样本中的比例',
+      '6.2.2': '簇在样本中的数量',
+      '6.3.1': '样本在细胞类型中的比例',
+      '6.3.2': '样本在细胞类型中的数量',
+      '6.4.1': '细胞类型在样本中的比例',
+      '6.4.2': '细胞类型在样本中的数量',
+      '6.5': '簇与表达相关性',
+      '6.6.1': '相关性热图1',
+      '6.6.2': '相关性热图2'
+    }
+
+    // 构建数据结构
+    Array.from(groups.entries()).sort((a, b) => a[0].localeCompare(b[0])).forEach(([prefix, images]) => {
+      result.sections.push({
+        title: groupTitleMap[prefix] || prefix,
+        imageGroups: [{
+          groupTitle: groupTitleMap[prefix] || prefix,
+          activeTab: images[0]?.tabName || '',
+          images: images
+        }]
+      })
+    })
+
+    // 添加特殊图片组（条件性显示）
+    if (specialGroups.has('MiloR_')) {
+      const milorImages = specialGroups.get('MiloR_')
+      result.sections.push({
+        title: 'MiloR分析',
+        imageGroups: [{
+          groupTitle: 'MiloR分析',
+          activeTab: milorImages[0]?.tabName || '',
+          images: milorImages
+        }]
+      })
+    }
+
+    if (specialGroups.has('OR_')) {
+      const orImages = specialGroups.get('OR_')
+      result.sections.push({
+        title: 'Odds Ratio分析',
+        imageGroups: [{
+          groupTitle: 'Odds Ratio分析',
+          activeTab: orImages[0]?.tabName || '',
+          images: orImages
+        }]
+      })
+    }
+
+    if (specialGroups.has('Roe_')) {
+      const roeImages = specialGroups.get('Roe_')
+      result.sections.push({
+        title: 'Roe分析',
+        imageGroups: [{
+          groupTitle: 'Roe分析',
+          activeTab: roeImages[0]?.tabName || '',
+          images: roeImages
+        }]
+      })
+    }
+
+    return result
+  } catch (error) {
+    console.error('加载 06.compositional 图片失败:', error)
+    return { title: '组成分析', sections: [] }
+  }
+}

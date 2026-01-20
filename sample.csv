@@ -1,0 +1,7 @@
+sample,path,stats,tissue,patient,batch,condition
+sample1,/media/desk16/MaTianyu/Project/0X.test2/data/sample1,None,Tissue,sample1,batch1,treat
+sample2,/media/desk16/MaTianyu/Project/0X.test2/data/sample2,None,Tissue,sample2,batch2,treat
+sample3,/media/desk16/MaTianyu/Project/0X.test2/data/sample3,None,Tissue,sample3,batch3,treat
+sample4,/media/desk16/MaTianyu/Project/0X.test2/data/sample4,None,Tissue,sample4,batch4,control
+sample5,/media/desk16/MaTianyu/Project/0X.test2/data/sample5,None,Tissue,sample5,batch5,control
+sample6,/media/desk16/MaTianyu/Project/0X.test2/data/sample6,None,Tissue,sample6,batch6,control
