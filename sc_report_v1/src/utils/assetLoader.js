@@ -116,7 +116,8 @@ export function loadLoadImages() {
         imageGroups: [{
           groupTitle: imageType,
           activeTab: images[0]?.tabName || '',
-          images: images
+          images: images,
+          caption: `图注：该图展示了各样本的${imageType}分析结果，可以通过上方标签切换不同样本进行对比。`
         }]
       })
     })
@@ -227,14 +228,16 @@ export function loadQCImages() {
         genesGroups.push({
           groupTitle: '各样本基因数散点图',
           activeTab: scatterImages[0]?.tabName || '',
-          images: scatterImages
+          images: scatterImages,
+          caption: '图注：该散点图展示了各样本中每个细胞的基因数量分布情况，横轴表示细胞索引，纵轴表示基因数。'
         })
       }
       if (outlierImages.length > 0) {
         genesGroups.push({
           groupTitle: '各样本基因数outlier散点图',
           activeTab: outlierImages[0]?.tabName || '',
-          images: outlierImages
+          images: outlierImages,
+          caption: '图注：该图展示了基因数的异常值检测结果，红色点表示被识别为异常值（outlier）的细胞。'
         })
       }
 
@@ -258,14 +261,16 @@ export function loadQCImages() {
         mtGroups.push({
           groupTitle: '各样本线粒体基因比例',
           activeTab: mtScatterImages[0]?.tabName || '',
-          images: mtScatterImages
+          images: mtScatterImages,
+          caption: '图注：该散点图展示了各样本中每个细胞的线粒体基因比例分布情况，横轴表示细胞索引，纵轴表示线粒体基因比例。'
         })
       }
       if (mtOutlierImages.length > 0) {
         mtGroups.push({
           groupTitle: '各样本线粒体基因outlier散点图',
           activeTab: mtOutlierImages[0]?.tabName || '',
-          images: mtOutlierImages
+          images: mtOutlierImages,
+          caption: '图注：该图展示了线粒体基因比例的异常值检测结果，红色点表示被识别为异常值的细胞。'
         })
       }
 
@@ -294,28 +299,32 @@ export function loadQCImages() {
       filterGroups.push({
         groupTitle: 'MAD方法过滤 - 散点图',
         activeTab: madScatterImages[0]?.tabName || '',
-        images: madScatterImages
+        images: madScatterImages,
+        caption: '图注：该散点图展示了基于MAD（中位数绝对偏差）方法的质量控制过滤结果，蓝色区域表示被保留的高质量细胞，红色区域表示被过滤的低质量细胞。'
       })
     }
     if (madViolinImages.length > 0) {
       filterGroups.push({
         groupTitle: 'MAD方法过滤 - 分布图',
         activeTab: madViolinImages[0]?.tabName || '',
-        images: madViolinImages
+        images: madViolinImages,
+        caption: '图注：该小提琴图展示了MAD方法过滤前后各样本的基因数和线粒体基因比例分布对比。'
       })
     }
     if (manualScatterImages.length > 0) {
       filterGroups.push({
         groupTitle: '手动过滤 - 散点图',
         activeTab: manualScatterImages[0]?.tabName || '',
-        images: manualScatterImages
+        images: manualScatterImages,
+        caption: '图注：该散点图展示了基于手动设置阈值的质量控制过滤结果，蓝色区域表示被保留的高质量细胞，红色区域表示被过滤的低质量细胞。'
       })
     }
     if (manualViolinImages.length > 0) {
       filterGroups.push({
         groupTitle: '手动过滤 - 分布图',
         activeTab: manualViolinImages[0]?.tabName || '',
-        images: manualViolinImages
+        images: manualViolinImages,
+        caption: '图注：该小提琴图展示了手动阈值过滤前后各样本的基因数和线粒体基因比例分布对比。'
       })
     }
 
@@ -400,7 +409,8 @@ export function loadIntegrateImages() {
         imageGroups: [{
           groupTitle: groupTitleMap[prefix] || prefix,
           activeTab: images[0]?.tabName || '',
-          images: images.sort((a, b) => a.tabLabel.localeCompare(b.tabLabel))
+          images: images.sort((a, b) => a.tabLabel.localeCompare(b.tabLabel)),
+          caption: `图注：该图展示了${groupTitleMap[prefix] || prefix}的分析结果。`
         }]
       })
     })
@@ -425,7 +435,8 @@ export function loadPredictionImages() {
         imageGroups: [{
           groupTitle: 'CellTypist预测结果',
           activeTab: 'default',
-          images: [{ tabLabel: '待补充', tabName: 'default', title: 'CellTypist预测结果', url: '/src/assets/img/test1.png' }]
+          images: [{ tabLabel: '待补充', tabName: 'default', title: 'CellTypist预测结果', url: '/src/assets/img/test1.png' }],
+          caption: '图注：CellTypist是一种基于机器学习的细胞类型预测工具，利用预训练的免疫细胞参考数据库进行预测。'
         }]
       },
       {
@@ -433,7 +444,8 @@ export function loadPredictionImages() {
         imageGroups: [{
           groupTitle: 'SCimilarity预测结果',
           activeTab: 'default',
-          images: [{ tabLabel: '待补充', tabName: 'default', title: 'SCimilarity预测结果', url: '/src/assets/img/test1.png' }]
+          images: [{ tabLabel: '待补充', tabName: 'default', title: 'SCimilarity预测结果', url: '/src/assets/img/test1.png' }],
+          caption: '图注：SCimilarity基于相似性度量进行细胞类型预测，适用于未知细胞类型的快速鉴定。'
         }]
       },
       {
@@ -441,7 +453,8 @@ export function loadPredictionImages() {
         imageGroups: [{
           groupTitle: 'starCAT预测结果',
           activeTab: 'default',
-          images: [{ tabLabel: '待补充', tabName: 'default', title: 'starCAT预测结果', url: '/src/assets/img/test1.png' }]
+          images: [{ tabLabel: '待补充', tabName: 'default', title: 'starCAT预测结果', url: '/src/assets/img/test1.png' }],
+          caption: '图注：starCAT专门用于T细胞亚型的预测，利用T细胞受体（TCR）序列进行细胞类型鉴定。'
         }]
       }
     ]
@@ -566,14 +579,16 @@ export function loadAnnotationImages() {
         umapGroups.push({
           groupTitle: '各细胞类型Marker基因',
           activeTab: markerImages[0]?.tabName || '',
-          images: markerImages
+          images: markerImages,
+          caption: '图注：该图展示了各细胞类型的特异性Marker基因在UMAP空间中的分布情况，不同颜色代表不同的细胞类型。'
         })
       }
       if (annotationImages.length > 0) {
         umapGroups.push({
           groupTitle: '注释结果',
           activeTab: annotationImages[0]?.tabName || '',
-          images: annotationImages
+          images: annotationImages,
+          caption: '图注：该图展示了细胞注释的整体结果，每个细胞根据Marker基因表达被标记为特定的细胞类型。'
         })
       }
 
@@ -592,7 +607,8 @@ export function loadAnnotationImages() {
         imageGroups: [{
           groupTitle: `簇0-${result.clusterSections.length - 1} Top9 Marker`,
           activeTab: result.clusterSections[0]?.tabName || '',
-          images: result.clusterSections
+          images: result.clusterSections,
+          caption: '图注：该图展示了各个细胞簇中表达量最高的9个Marker基因，这些基因是定义该细胞簇的关键特征。'
         }]
       }]
     } else {
@@ -611,7 +627,8 @@ export function loadAnnotationImages() {
         heatmapGroups.push({
           groupTitle: '细胞类型Marker',
           activeTab: celltypeHeatmap[0]?.tabName || '',
-          images: celltypeHeatmap
+          images: celltypeHeatmap,
+          caption: '图注：该热图展示了各细胞类型的Marker基因表达水平，颜色越深表示表达量越高。'
         })
       }
 
@@ -623,7 +640,8 @@ export function loadAnnotationImages() {
         heatmapGroups.push({
           groupTitle: '矩阵图',
           activeTab: matrixplot[0]?.tabName || '',
-          images: matrixplot
+          images: matrixplot,
+          caption: '图注：该矩阵图以点阵形式展示了Marker基因在细胞簇中的表达情况，点的颜色和大小代表表达量。'
         })
       }
 
@@ -636,7 +654,8 @@ export function loadAnnotationImages() {
         heatmapGroups.push({
           groupTitle: '其他热图',
           activeTab: otherHeatmap[0]?.tabName || '',
-          images: otherHeatmap
+          images: otherHeatmap,
+          caption: '图注：该图展示了Marker基因的多种可视化形式，包括小提琴图、轨迹图、聚类热图等。'
         })
       }
 
@@ -658,7 +677,8 @@ export function loadAnnotationImages() {
         otherGroups.push({
           groupTitle: '点图',
           activeTab: dotplot[0]?.tabName || '',
-          images: dotplot
+          images: dotplot,
+          caption: '图注：该点图展示了Marker基因在不同细胞簇中的表达分布，横轴表示细胞簇，纵轴表示基因，点的大小和颜色代表表达量。'
         })
       }
 
@@ -668,7 +688,8 @@ export function loadAnnotationImages() {
         otherGroups.push({
           groupTitle: '相关性分析',
           activeTab: correlation[0]?.tabName || '',
-          images: correlation
+          images: correlation,
+          caption: '图注：该图展示了各细胞类型之间的相关性程度，相关性越高表示细胞类型越相似。'
         })
       }
 
@@ -775,7 +796,8 @@ export function loadCompositionalImages() {
         imageGroups: [{
           groupTitle: groupTitleMap[prefix] || prefix,
           activeTab: images[0]?.tabName || '',
-          images: images
+          images: images,
+          caption: `图注：该图展示了${groupTitleMap[prefix] || prefix}的分析结果。`
         }]
       })
     })
@@ -788,7 +810,8 @@ export function loadCompositionalImages() {
         imageGroups: [{
           groupTitle: 'MiloR分析',
           activeTab: milorImages[0]?.tabName || '',
-          images: milorImages
+          images: milorImages,
+          caption: '图注：MiloR是一种检测细胞组成差异的统计方法，可以识别在不同条件间显著变化的细胞群体。'
         }]
       })
     }
@@ -800,7 +823,8 @@ export function loadCompositionalImages() {
         imageGroups: [{
           groupTitle: 'Odds Ratio分析',
           activeTab: orImages[0]?.tabName || '',
-          images: orImages
+          images: orImages,
+          caption: '图注：Odds Ratio（优势比）用于衡量细胞类型在不同条件下的富集程度，OR值大于1表示富集。'
         }]
       })
     }
@@ -812,7 +836,8 @@ export function loadCompositionalImages() {
         imageGroups: [{
           groupTitle: 'Roe分析',
           activeTab: roeImages[0]?.tabName || '',
-          images: roeImages
+          images: roeImages,
+          caption: '图注：Roe分析用于评估细胞类型的相对丰度变化，提供对细胞组成差异的定量描述。'
         }]
       })
     }

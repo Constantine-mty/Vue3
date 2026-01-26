@@ -77,6 +77,11 @@
                   <div class="image-title">{{ currentImage(imageGroup)?.title }}</div>
                 </div>
               </div>
+
+              <!-- 图片组下方图注 -->
+              <div v-if="imageGroup.caption" class="image-group-caption" :class="{ multiLine: imageGroup.caption.includes('\n') }">
+                {{ imageGroup.caption }}
+              </div>
             </div>
           </el-card>
         </el-col>
@@ -303,6 +308,23 @@ const handleSearch = (groupIndex) => {
   border-radius: 8px;
   margin-top: 15px;
   border: 1px solid #e8eaed;
+}
+
+/* 图片组下方图注 */
+.image-group-caption {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #909399;
+  margin-top: 15px;
+  padding: 8px 12px;
+  background-color: #fafafa;
+  border-radius: 4px;
+}
+
+/* 多行图注左对齐 */
+.multiLine {
+  text-align: left !important;
+  white-space: pre-line;
 }
 
 /* 响应式设计 */

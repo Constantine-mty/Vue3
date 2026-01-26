@@ -18,74 +18,96 @@
         <!-- 01.load 模块 -->
         <section id="section-01-load" class="report-section">
           <h2>01. 数据加载</h2>
+          <TextBlock text="此处展示数据加载阶段的可视化结果，包括各样本的原始数据分布情况。通过这些图表可以了解数据集的基本特征。" />
           <ImageGallery :image-sections="loadImageSections" />
+          <TextBlock text="数据加载是单细胞分析的第一步，需要确保数据格式正确、样本信息完整。" />
         </section>
 
         <!-- 02.qc 模块 -->
         <section id="section-02-qc" class="report-section">
           <h2>02. 质量控制</h2>
+          <TextBlock text="质量控制是单细胞分析的关键步骤，通过检测基因数、线粒体基因比例等指标，识别并过滤低质量细胞。" />
           <ImageGallery :image-sections="qcImageSections" />
+          <TextBlock text="质量控制过滤后，细胞质量得到显著提升，为后续分析奠定基础。" />
 
           <!-- CSV 文件展示 - 分开两个独立的 subsection -->
           <div v-if="qcCSVData.csvFiles.length > 0 && qcCSVData.csvFiles[0]" class="subsection" id="section-02-qc-csv-1">
             <h3>{{ qcCSVData.csvFiles[0].title }}</h3>
-            <DataTable :csv-path="qcCSVData.csvFiles[0].url" />
+            <TextBlock text="该表格展示了质量控制前后各样本的细胞数量变化情况，包括过滤前的原始细胞数和过滤后的高质量细胞数。" />
+            <DataTable :csv-path="qcCSVData.csvFiles[0].url" caption="表注：QC前表示过滤前的细胞数，QC后表示过滤后的细胞数。" />
           </div>
 
           <div v-if="qcCSVData.csvFiles.length > 1 && qcCSVData.csvFiles[1]" class="subsection" id="section-02-qc-csv-2">
             <h3>{{ qcCSVData.csvFiles[1].title }}</h3>
-            <DataTable :csv-path="qcCSVData.csvFiles[1].url" />
+            <TextBlock text="该表格展示了各样本的双细胞率检测结果，双细胞是指多个细胞被错误地识别为单个细胞的情况。" />
+            <DataTable :csv-path="qcCSVData.csvFiles[1].url" caption="表注：双细胞率是检测到的双细胞数量占总细胞数的比例。" />
           </div>
         </section>
 
         <!-- 03.integrate 模块 -->
         <section id="section-03-integrate" class="report-section">
           <h2>03. 数据整合</h2>
+          <TextBlock text="数据整合旨在消除批次效应，使不同样本的细胞能够在同一空间中正确比较和聚类。" />
           <ImageGallery :image-sections="integrateImageSections" />
+          <TextBlock text="通过多种整合方法（如BBKNN、Harmony、Scanorama等），可以有效去除批次间差异，保留生物学变异。" />
         </section>
 
         <!-- 04.prediction 模块 -->
         <section id="section-04-prediction" class="report-section">
           <h2>04. 细胞预测</h2>
+          <TextBlock text="细胞预测利用已建立的细胞类型参考数据库，自动识别每个细胞的潜在类型，为后续注释提供重要参考。" />
           <ImageGallery :image-sections="predictionImageSections" />
+          <TextBlock text="CellTypist、SCimilarity、starCAT等方法各有优势，综合多种预测结果可以提高注释准确性。" />
         </section>
 
         <!-- 05.annotation 模块 -->
         <section id="section-05-annotation-umap" class="report-section">
           <h2>05. 细胞注释</h2>
+          <TextBlock text="细胞注释是单细胞分析的核心环节，通过Marker基因表达模式为每个细胞簇赋予生物学意义。" />
 
           <!-- 图片部分 - 使用全宽组件 -->
           <div class="subsection" id="section-05-annotation-umap-content">
             <h3>5.1 UMAP可视化</h3>
+            <TextBlock text="UMAP（Uniform Manifold Approximation and Projection）是一种非线性降维方法，能够很好地展示高维数据在低维空间中的分布。" />
             <ImageGalleryFullWidth :image-sections="annotationUMAPSections" />
+            <TextBlock text="通过UMAP可视化，可以直观地观察细胞类型的空间分布和聚类效果。" />
           </div>
 
           <div class="subsection" id="section-05-annotation-cluster">
             <h3>5.2 聚类Marker分析</h3>
+            <TextBlock text="Marker基因是在特定细胞簇中高表达且在其他簇中低表达的基因，是细胞注释的重要依据。" />
             <ImageGalleryFullWidth :image-sections="annotationClusterSections" />
+            <TextBlock text="Top9 Marker展示了每个细胞簇中表达量最高的9个特征基因。" />
           </div>
 
           <div class="subsection" id="section-05-annotation-heatmap">
             <h3>5.3 Marker基因热图</h3>
+            <TextBlock text="热图能够同时展示多个基因在多个细胞簇中的表达水平，颜色深浅代表表达量高低。" />
             <ImageGallery :image-sections="annotationHeatmapSections" />
+            <TextBlock text="通过热图可以快速识别细胞类型的特异性Marker基因组合。" />
           </div>
 
           <div class="subsection" id="section-05-annotation-other">
             <h3>5.4 其他分析</h3>
+            <TextBlock text="点图和相关分析提供了Marker基因表达分布的更多细节信息。" />
             <ImageGallery :image-sections="annotationOtherSections" />
+            <TextBlock text="这些补充分析有助于验证细胞注释的可靠性。" />
           </div>
 
           <!-- 表格部分 -->
           <div class="subsection" id="section-05-annotation-table">
             <h3>5.5 Marker基因表</h3>
-            <DataTable csv-path="/src/assets/05.annotation/csv/Scanpy_markers_per_cluster.csv" />
+            <TextBlock text="该表格详细列出了每个细胞簇的Marker基因信息，包括基因名称、表达量、统计显著性等指标。" />
+            <DataTable csv-path="/src/assets/05.annotation/csv/Scanpy_markers_per_cluster.csv" caption="表注：p_val_adj表示校正后的p值，logFC表示对数 fold change。" />
           </div>
         </section>
 
         <!-- 06.compositional 模块 -->
         <section id="section-06-compositional" class="report-section">
           <h2>06. 组成分析</h2>
+          <TextBlock text="组成分析关注不同样本、簇或细胞类型之间的比例关系，揭示样本间或条件下的细胞组成差异。" />
           <ImageGallery :image-sections="compositionalSections" />
+          <TextBlock text="通过组成分析，可以发现样本间细胞类型的富集或缺失情况，为理解生物学差异提供线索。" />
         </section>
       </div>
     </div>
@@ -98,6 +120,7 @@ import SideMenu from './components/SideMenu.vue'
 import ImageGallery from './components/ImageGallery.vue'
 import ImageGalleryFullWidth from './components/ImageGalleryFullWidth.vue'
 import DataTable from './components/DataTable.vue'
+import TextBlock from './components/TextBlock.vue'
 import {
   loadLoadImages,
   loadQCImages,

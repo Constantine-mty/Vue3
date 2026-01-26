@@ -32,7 +32,7 @@
         :sortable="column.sortable"
       >
         <template #default="{ row }">
-          {{ formatCellValue(row[column.key], column.key) }}
+          {{ formatCellValue(row[column.key]) }}
         </template>
       </el-table-column>
     </el-table>
@@ -50,6 +50,11 @@
       />
       <el-text type="info">共 {{ filteredData.length }} 条记录</el-text>
     </div>
+
+    <!-- 下方表注 -->
+    <div v-if="caption" class="table-caption" :class="{ multiLine: caption.includes('\n') }">
+      {{ caption }}
+    </div>
   </div>
 </template>
 
@@ -62,6 +67,10 @@ const props = defineProps({
   csvPath: {
     type: String,
     default: '/src/assets/Scanpy_markers_per_cluster.csv'
+  },
+  caption: {
+    type: String,
+    default: ''
   }
 })
 
@@ -103,7 +112,7 @@ const currentPageData = computed(() => {
 })
 
 // 格式化单元格值
-const formatCellValue = (value, key) => {
+const formatCellValue = (value) => {
   if (value === null || value === undefined) return '-'
 
   // 数值类型保留2位小数
@@ -198,5 +207,22 @@ onMounted(() => {
 
 :deep(.el-table--striped .el-table__body tr.el-table__row--striped td) {
   background-color: #fafafa;
+}
+
+/* 表注样式 - 较小字体 */
+.table-caption {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #909399;
+  margin-top: 15px;
+  padding: 8px 12px;
+  background-color: #fafafa;
+  border-radius: 4px;
+}
+
+/* 多行表注左对齐 */
+.multiLine {
+  text-align: left !important;
+  white-space: pre-line;
 }
 </style>

@@ -47,6 +47,11 @@
                   <div class="image-title">{{ image.title }}</div>
                 </el-tab-pane>
               </el-tabs>
+
+              <!-- 图片组下方图注 -->
+              <div v-if="imageGroup.caption" class="image-group-caption" :class="{ multiLine: imageGroup.caption.includes('\n') }">
+                {{ imageGroup.caption }}
+              </div>
             </div>
           </el-card>
         </el-col>
@@ -56,7 +61,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { Picture } from '@element-plus/icons-vue'
 
 defineProps({
@@ -148,6 +152,23 @@ defineProps({
   padding: 8px;
   background-color: #f9fafc;
   border-radius: 4px;
+}
+
+/* 图片组下方图注 */
+.image-group-caption {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #909399;
+  margin-top: 15px;
+  padding: 8px 12px;
+  background-color: #fafafa;
+  border-radius: 4px;
+}
+
+/* 多行图注左对齐 */
+.multiLine {
+  text-align: left !important;
+  white-space: pre-line;
 }
 
 :deep(.el-tabs__header) {
