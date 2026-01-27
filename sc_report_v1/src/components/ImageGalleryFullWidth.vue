@@ -7,6 +7,11 @@
     >
       <h3 class="section-title">{{ section.title }}</h3>
 
+      <!-- Section级别文本框（可选） -->
+      <div v-if="section.description" class="section-description">
+        {{ section.description }}
+      </div>
+
       <el-row :gutter="20">
         <el-col
           v-for="(imageGroup, groupIndex) in section.imageGroups"
@@ -146,6 +151,17 @@ const handleSearch = (groupIndex) => {
   color: #303133;
   font-size: 18px;
   font-weight: 600;
+}
+
+.section-description {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f0f4ff;
+  border-left: 4px solid #667eea;
+  border-radius: 4px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #606266;
 }
 
 .image-group-card {
