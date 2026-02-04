@@ -123,7 +123,7 @@ export function loadLoadImages() {
     if (overallImages.length > 0) {
       result.sections.push({
         title: '总体跨样本分布',
-        description: '所有样本的质控前数据分布情况',
+        // description: '所有样本的质控前数据分布情况',
         imageGroups: [{
           groupTitle: '总体分布',
           activeTab: overallImages[0].tabName,

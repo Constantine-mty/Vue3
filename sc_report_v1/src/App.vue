@@ -2,7 +2,13 @@
   <div class="app-container">
     <!-- 顶部标题栏 -->
     <div class="top-bar">
-      <h1>单细胞转录组分析报告</h1>
+      <div class="top-bar-content">
+        <div class="logo-area">
+          <!-- <div class="logo-icon">🧬</div> -->
+          <img src="/src/assets/img/logo.jpg" alt="Logo" class="logo-img" />
+          <h1>单细胞转录组分析报告</h1>
+        </div>
+      </div>
     </div>
 
     <div class="main-content">
@@ -22,28 +28,28 @@
 
           <!-- 总体跨样本分布 - 使用 ImageGalleryFullWidth -->
           <div class="subsection" id="section-01-load-overall">
-            <h3>总体跨样本分布</h3>
+            <h3>总体跨样本分布概览</h3>
             <TextBlock text="所有样本的质控前数据分布情况。" />
             <ImageGalleryFullWidth v-if="loadOverallSection" :image-sections="[loadOverallSection]" />
           </div>
 
           <!-- 样本分布图 - 使用 ImageGallery -->
           <div class="subsection" id="section-01-load-distribution">
-            <h3>样本分布图</h3>
+            <h3>单样本数据分布1</h3>
             <TextBlock text="分布图以小提琴图形式展示各样本的质量指标分布。" />
             <ImageGalleryFullWidth v-if="loadDistributionSection" :image-sections="[loadDistributionSection]" />
           </div>
 
           <!-- 异常值检测 - 使用 ImageGallery -->
           <div class="subsection" id="section-01-load-outlier">
-            <h3>异常值检测</h3>
+            <h3>MAD离群细胞检测</h3>
             <TextBlock text="异常值检测用于识别偏离正常分布的细胞，这些细胞可能是低质量细胞或异常数据点。" />
             <ImageGallery v-if="loadOutlierSection" :image-sections="[loadOutlierSection]" />
           </div>
 
           <!-- 散点图分析 - 使用 ImageGallery -->
           <div class="subsection" id="section-01-load-scatter">
-            <h3>散点图分析</h3>
+            <h3>单样本数据分布2</h3>
             <TextBlock text="散点图展示了每个细胞的基因数、UMI计数等质量指标在样本中的分布情况。" />
             <ImageGallery v-if="loadScatterSection" :image-sections="[loadScatterSection]" />
           </div>
@@ -610,23 +616,48 @@ const compositionalRoeSection = computed(() => compositionalSections.value.find(
 <style scoped>
 .app-container {
   min-height: 100vh;
-  background-color: #f5f7fa;
+  background-color: #f8f9fa;
 }
 
 .top-bar {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 20px 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  color: #333;
+  padding: 16px 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;
   z-index: 100;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.top-bar-content {
+  display: flex;
+  align-items: center;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 .top-bar h1 {
   margin: 0;
-  font-size: 24px;
-  font-weight: 500;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  letter-spacing: -0.5px;
 }
 
 .main-content {
@@ -635,45 +666,48 @@ const compositionalRoeSection = computed(() => compositionalSections.value.find(
 
 .content-area {
   flex: 1;
-  padding: 30px;
+  padding: 24px;
   overflow-y: auto;
-  max-height: calc(100vh - 80px);
+  max-height: calc(100vh - 70px);
   scroll-behavior: smooth;
   position: relative;
 }
 
 .report-section {
   background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  margin-bottom: 30px;
+  padding: 32px;
+  border-radius: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  margin-bottom: 24px;
+  border: 1px solid #e5e7eb;
 }
 
 .report-section h2 {
   margin-top: 0;
-  margin-bottom: 30px;
-  color: #303133;
-  font-size: 22px;
+  margin-bottom: 24px;
+  color: #111827;
+  font-size: 20px;
   font-weight: 600;
-  border-bottom: 3px solid #667eea;
-  padding-bottom: 15px;
+  border-bottom: 2px solid #6366f1;
+  padding-bottom: 12px;
+  letter-spacing: -0.3px;
 }
 
 .subsection {
-  margin: 40px 0;
+  margin: 32px 0;
   padding: 20px;
-  background-color: #fafafa;
-  border-radius: 6px;
-  border-left: 4px solid #667eea;
+  background-color: #f9fafb;
+  border-radius: 0;
+  border-left: 3px solid #6366f1;
 }
 
 .subsection h3 {
   margin-top: 0;
-  margin-bottom: 25px;
-  color: #409eff;
-  font-size: 18px;
+  margin-bottom: 20px;
+  color: #4b5563;
+  font-size: 16px;
   font-weight: 600;
+  letter-spacing: -0.2px;
 }
 
 .subsection > :first-child {
