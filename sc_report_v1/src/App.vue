@@ -24,7 +24,7 @@
         <!-- 01.load 模块 -->
         <section id="section-01-load" class="report-section">
           <h2>01. 数据分布情况</h2>
-          <TextBlock text="展示数据质控前阶段各样本的原始数据分布情况的可视化结果，包括了检测基因数量、线粒体比例和UMI计数。通过这些图表可以了解数据集的基本特征。" />
+          <TextBlock text="展示数据质控前阶段各样本的原始数据分布情况的可视化结果，包括了检测基因数量、线粒体比例和UMI计数。通过这些图表可以了解未进行细胞质控前的数据集的基本特征。" />
 
           <!-- 总体跨样本分布 - 使用 ImageGalleryFullWidth -->
           <div class="subsection" id="section-01-load-overall">
