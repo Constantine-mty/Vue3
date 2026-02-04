@@ -122,12 +122,13 @@ export function loadLoadImages() {
     // 添加总体分布（使用 ImageGalleryFullWidth）
     if (overallImages.length > 0) {
       result.sections.push({
-        title: '总体跨样本分布',
+        title: '跨样本分布可视化',
         // description: '所有样本的质控前数据分布情况',
         imageGroups: [{
-          groupTitle: '总体分布',
+          groupTitle: 'Violin Plot 展示UMI count，Gene number，线粒体比例',
           activeTab: overallImages[0].tabName,
-          images: overallImages
+          images: overallImages,
+          caption: '图注：该图展示了全部样本UMI count，Gene number，线粒体比例'
         }]
       })
     }
@@ -146,7 +147,7 @@ export function loadLoadImages() {
           groupTitle: '线粒体基因outlier散点图',
           activeTab: mtOutlierImages[0]?.tabName || '',
           images: mtOutlierImages,
-          caption: '图注：该图展示了线粒体基因比例的异常值检测结果，红色点表示被识别为异常值的细胞。'
+          caption: '图注：该图展示了线粒体基因比例的异常值检测结果，橙色点表示被识别为异常值的细胞。'
         })
       }
 
@@ -160,13 +161,13 @@ export function loadLoadImages() {
           groupTitle: '基因数outlier散点图',
           activeTab: outlierImages[0]?.tabName || '',
           images: outlierImages,
-          caption: '图注：该图展示了基因数的异常值检测结果，红色点表示被识别为异常值（outlier）的细胞。'
+          caption: '图注：该图展示了基因数与UMI计数的异常值检测结果，橙色点表示被识别为异常值（outlier）的细胞。'
         })
       }
 
       result.sections.push({
-        title: '异常值检测',
-        description: '异常值检测用于识别偏离正常分布的细胞，这些细胞可能是低质量细胞或异常数据点。',
+        title: 'MAD异常值检测',
+        description: "在仅包含少量或规模较小的数据集中，QC 通常通过人工方式完成，即通过观察各类 QC 指标的分布并识别异常值进行过滤。然而，随着数据规模不断增大，这一过程会变得越来越耗时，因此可以考虑使用基于 MAD（median absolute deviation，中位数绝对偏差） 的自动阈值判定方法。MAD 是一种对异常值不敏感的稳健统计量，用于描述某一 QC 指标的变异程度，类似于 Germain 等人（2020） 的做法，我们将偏离中位数 5 个 MAD 的细胞标记为异常值。这是一种相对宽松的过滤策略。",  
         imageGroups: outlierGroups
       })
     }
@@ -182,10 +183,10 @@ export function loadLoadImages() {
           return aNum - bNum
         })
         scatterGroups.push({
-          groupTitle: '散点图',
+          groupTitle: '三QC特征综合散点图',
           activeTab: scatterImages[0]?.tabName || '',
           images: scatterImages,
-          caption: '图注：该散点图展示了各样本中每个细胞的基因数分布情况，横轴表示细胞索引，纵轴表示基因数。'
+          caption: '图注：该散点图综合展示了各样本中每个细胞的基因数，UMI计数，线粒体比例分布情况，横轴表示UMI计数，纵轴表示基因数，颜色深浅表示线粒体比例。'
         })
       }
 
@@ -204,8 +205,8 @@ export function loadLoadImages() {
       }
 
       result.sections.push({
-        title: '散点图分析',
-        description: '散点图展示了每个细胞的基因数、UMI计数等质量指标在样本中的分布情况。',
+        title: '其他统计可视化',
+        // description: '散点图展示了每个细胞的基因数、UMI计数等质量指标在样本中的分布情况。',
         imageGroups: scatterGroups
       })
     }
@@ -219,10 +220,10 @@ export function loadLoadImages() {
       })
 
       result.sections.push({
-        title: '样本分布图',
-        description: '分布图以小提琴图形式展示各样本的质量指标分布。',
+        title: '单样本分布可视化',
+        // description: '分布图以小提琴图形式展示各样本的质量指标分布。',
         imageGroups: [{
-          groupTitle: '分布图',
+          groupTitle: 'Violin Plot 展示UMI count，Gene number，线粒体比例',
           activeTab: distributionViolinImages[0]?.tabName || '',
           images: distributionViolinImages,
           caption: '图注：该小提琴图展示了各样本的质量指标分布，可以直观比较不同样本的分布特征。'
@@ -334,24 +335,24 @@ export function loadQCImages() {
 
       if (scatterImages.length > 0) {
         genesGroups.push({
-          groupTitle: '各样本基因数散点图',
+          groupTitle: '手动阈值',
           activeTab: scatterImages[0]?.tabName || '',
           images: scatterImages,
-          caption: '图注：该散点图展示了各样本中每个细胞的基因数量分布情况，横轴表示细胞索引，纵轴表示基因数。'
+          caption: '图注：该散点图展示用于如果手动阈值过滤的数值。'
         })
       }
       if (outlierImages.length > 0) {
         genesGroups.push({
-          groupTitle: '各样本基因数outlier散点图',
+          groupTitle: 'MAD离群过滤',
           activeTab: outlierImages[0]?.tabName || '',
           images: outlierImages,
-          caption: '图注：该图展示了基因数的异常值检测结果，红色点表示被识别为异常值（outlier）的细胞。'
+          caption: '图注：该散点图展示用于如果MAD阈值自动过滤的数值。'
         })
       }
 
       result.sections.push({
-        title: '基因数分布',
-        description: '基因数是评估细胞质量的重要指标。基因数过低可能代表空液滴或死细胞，基因数过高可能代表双细胞。',
+        title: '阈值在基因数和UMI计数中的分布',
+        // description: '基因数是评估细胞质量的重要指标。基因数过低可能代表空液滴或死细胞，基因数过高可能代表双细胞。',
         imageGroups: genesGroups
       })
     }
@@ -368,24 +369,24 @@ export function loadQCImages() {
 
       if (mtScatterImages.length > 0) {
         mtGroups.push({
-          groupTitle: '各样本线粒体基因比例',
+          groupTitle: '手动阈值',
           activeTab: mtScatterImages[0]?.tabName || '',
           images: mtScatterImages,
-          caption: '图注：该散点图展示了各样本中每个细胞的线粒体基因比例分布情况，横轴表示细胞索引，纵轴表示线粒体基因比例。'
+          caption: '图注：该散点图展示用于如果手动阈值过滤的数值。'
         })
       }
       if (mtOutlierImages.length > 0) {
         mtGroups.push({
-          groupTitle: '各样本线粒体基因outlier散点图',
+          groupTitle: 'MAD离群过滤',
           activeTab: mtOutlierImages[0]?.tabName || '',
           images: mtOutlierImages,
-          caption: '图注：该图展示了线粒体基因比例的异常值检测结果，红色点表示被识别为异常值的细胞。'
+          caption: '图注：该散点图展示用于如果MAD阈值自动过滤的数值'
         })
       }
 
       result.sections.push({
-        title: '线粒体基因比例',
-        description: '线粒体基因比例过高通常表示细胞处于应激状态或濒死状态，需要适当过滤。',
+        title: '阈值在线粒体基因比例中的分布',
+        // description: '线粒体基因比例过高通常表示细胞处于应激状态或濒死状态，需要适当过滤。',
         imageGroups: mtGroups
       })
     }
@@ -410,7 +411,7 @@ export function loadQCImages() {
         groupTitle: 'MAD方法过滤 - 散点图',
         activeTab: madScatterImages[0]?.tabName || '',
         images: madScatterImages,
-        caption: '图注：该散点图展示了基于MAD（中位数绝对偏差）方法的质量控制过滤结果，蓝色区域表示被保留的高质量细胞，红色区域表示被过滤的低质量细胞。'
+        caption: '图注：该散点图展示了基于MAD（中位数绝对偏差）方法的质量控制过滤结果'
       })
     }
     if (madViolinImages.length > 0) {
@@ -418,7 +419,7 @@ export function loadQCImages() {
         groupTitle: 'MAD方法过滤 - 分布图',
         activeTab: madViolinImages[0]?.tabName || '',
         images: madViolinImages,
-        caption: '图注：该小提琴图展示了MAD方法过滤前后各样本的基因数和线粒体基因比例分布对比。'
+        caption: '图注：该小提琴图展示了MAD方法过滤后各样本数据分布。'
       })
     }
     if (manualScatterImages.length > 0) {
@@ -426,7 +427,7 @@ export function loadQCImages() {
         groupTitle: '手动过滤 - 散点图',
         activeTab: manualScatterImages[0]?.tabName || '',
         images: manualScatterImages,
-        caption: '图注：该散点图展示了基于手动设置阈值的质量控制过滤结果，蓝色区域表示被保留的高质量细胞，红色区域表示被过滤的低质量细胞。'
+        caption: '图注：该散点图展示了基于手动设置阈值的质量控制过滤结果'
       })
     }
     if (manualViolinImages.length > 0) {
@@ -434,13 +435,13 @@ export function loadQCImages() {
         groupTitle: '手动过滤 - 分布图',
         activeTab: manualViolinImages[0]?.tabName || '',
         images: manualViolinImages,
-        caption: '图注：该小提琴图展示了手动阈值过滤前后各样本的基因数和线粒体基因比例分布对比。'
+        caption: '图注：该小提琴图展示了手动阈值过滤后各样本数据分布。'
       })
     }
 
     if (filterGroups.length > 0) {
       result.sections.push({
-        title: '质量控制过滤',
+        title: '质量控制过滤后数据分布',
         imageGroups: filterGroups
       })
     }
@@ -552,7 +553,7 @@ export function loadIntegrateImages() {
     if (hvgViolinImages.length > 0) {
       result.sections.push({
         title: '质控整合后各样本数据分布情况',
-        description: '在HVG选择后，展示了各样本在质控整合后的数据分布情况。',
+        // description: '在HVG选择后，展示了各样本在质控整合后的数据分布情况。',
         imageGroups: [{
           groupTitle: '分布情况',
           activeTab: hvgViolinImages[0]?.tabName || '',
@@ -729,8 +730,8 @@ export function loadIntegrateImages() {
 
           if (clusterImageGroups.length > 0) {
             result.sections.push({
-              title: '聚类分析',
-              description: '聚类分析将相似的细胞分组在一起，为后续细胞类型注释提供基础。',
+              title: 'Leiden聚类分析',
+              description: '使用Leiden聚类方法在不同分辨率下进行聚类计算',
               imageGroups: clusterImageGroups
             })
           }
@@ -744,10 +745,10 @@ export function loadIntegrateImages() {
           )
           if (harmonyGridImages.length > 0) {
             gridImageGroups.push({
-              groupTitle: 'Harmony聚类网格',
+              groupTitle: 'Harmony聚类多分辨率汇总',
               activeTab: harmonyGridImages[0]?.tabName || '',
               images: harmonyGridImages.sort((a, b) => a.tabLabel.localeCompare(b.tabLabel)),
-              caption: '图注：该聚类网格展示了基于Harmony方法在不同聚类分辨率下的聚类效果，帮助选择最优的聚类参数。'
+              caption: '图注：展示了基于Harmony方法在不同聚类分辨率下的聚类效果，帮助选择最优的聚类参数。'
             })
           }
 
@@ -757,10 +758,10 @@ export function loadIntegrateImages() {
           )
           if (bbknnGridImages.length > 0) {
             gridImageGroups.push({
-              groupTitle: 'BBKNN聚类网格',
+              groupTitle: 'BBKNN聚类多分辨率汇总',
               activeTab: bbknnGridImages[0]?.tabName || '',
               images: bbknnGridImages.sort((a, b) => a.tabLabel.localeCompare(b.tabLabel)),
-              caption: '图注：该聚类网格展示了基于BBKNN方法在不同聚类分辨率下的聚类效果，帮助选择最优的聚类参数。'
+              caption: '图注：展示了基于BBKNN方法在不同聚类分辨率下的聚类效果，帮助选择最优的聚类参数。'
             })
           }
 
@@ -770,10 +771,10 @@ export function loadIntegrateImages() {
           )
           if (scanoramaGridImages.length > 0) {
             gridImageGroups.push({
-              groupTitle: 'Scanorama聚类网格',
+              groupTitle: 'Scanorama聚类多分辨率汇总',
               activeTab: scanoramaGridImages[0]?.tabName || '',
               images: scanoramaGridImages.sort((a, b) => a.tabLabel.localeCompare(b.tabLabel)),
-              caption: '图注：该聚类网格展示了基于Scanorama方法在不同聚类分辨率下的聚类效果，帮助选择最优的聚类参数。'
+              caption: '图注：展示了基于Scanorama方法在不同聚类分辨率下的聚类效果，帮助选择最优的聚类参数。'
             })
           }
 
@@ -783,17 +784,17 @@ export function loadIntegrateImages() {
           )
           if (scviGridImages.length > 0) {
             gridImageGroups.push({
-              groupTitle: 'scVI聚类网格',
+              groupTitle: 'scVI聚类多分辨率汇总',
               activeTab: scviGridImages[0]?.tabName || '',
               images: scviGridImages.sort((a, b) => a.tabLabel.localeCompare(b.tabLabel)),
-              caption: '图注：该聚类网格展示了基于scVI方法在不同聚类分辨率下的聚类效果，帮助选择最优的聚类参数。'
+              caption: '图注：展示了基于scVI方法在不同聚类分辨率下的聚类效果，帮助选择最优的聚类参数。'
             })
           }
 
           if (gridImageGroups.length > 0) {
             result.sections.push({
-              title: '聚类网格',
-              description: '聚类网格展示了不同聚类分辨率下的聚类效果，帮助选择最优的聚类参数。',
+              title: '多分辨率聚类结果汇总可视化',
+              description: '多分辨率聚类结果汇总展示了不同方法/不同分辨率下的聚类效果，帮助选择最优的聚类参数。',
               imageGroups: gridImageGroups
             })
           }
@@ -810,7 +811,7 @@ export function loadIntegrateImages() {
               groupTitle: '细胞周期（Cell Cycle）',
               activeTab: cellCycleImages[0]?.tabName || '',
               images: cellCycleImages.sort((a, b) => a.tabLabel.localeCompare(b.tabLabel)),
-              caption: '图注：该图展示了细胞周期在不同方法下的分布情况，细胞周期分析有助于理解细胞的状态和活动。'
+              caption: '图注：该图展示了细胞周期在不同降维坐标下的分布情况，细胞周期分析有助于理解细胞的状态和活动。'
             })
           }
 
@@ -823,7 +824,7 @@ export function loadIntegrateImages() {
               groupTitle: '双细胞检测（Doublets）',
               activeTab: doubletsImages[0]?.tabName || '',
               images: doubletsImages.sort((a, b) => a.tabLabel.localeCompare(b.tabLabel)),
-              caption: '图注：该图展示了双细胞检测结果，双细胞是指多个细胞被错误地识别为单个细胞的情况，需要过滤以提高数据质量。'
+              caption: '图注：该图展示了双细胞检测结果，predict_doublet表示被预测为双细胞的细胞；doublet_score表示该细胞被判断为双细胞的分数'
             })
           }
 
@@ -838,7 +839,7 @@ export function loadIntegrateImages() {
               groupTitle: '关键QC特征（Key QC Features）',
               activeTab: keyQCImages[0]?.tabName || '',
               images: keyQCImages.sort((a, b) => a.tabLabel.localeCompare(b.tabLabel)),
-              caption: '图注：该图展示了关键质量控制特征在不同方法下的分布情况，包括基因数、UMI计数等指标。'
+              caption: '图注：该图展示了关键质量控制特征在不同降维坐标下的分布情况，包括基因数、UMI计数等指标。'
             })
           }
 
@@ -846,15 +847,15 @@ export function loadIntegrateImages() {
           if (qcFeatureImageGroups.some(g => g.groupTitle.includes('细胞周期'))) {
             result.sections.push({
               title: '细胞周期分析',
-              description: '细胞周期分析是单细胞数据质量控制的重要环节，能够识别细胞所处的周期阶段。',
+              // description: '细胞周期分析是单细胞数据质量控制的重要环节，能够识别细胞所处的周期阶段。',
               imageGroups: qcFeatureImageGroups.filter(g => g.groupTitle.includes('细胞周期'))
             })
           }
 
           if (qcFeatureImageGroups.some(g => g.groupTitle.includes('双细胞'))) {
             result.sections.push({
-              title: '双细胞检测',
-              description: '双细胞检测用于识别包含多个细胞的液滴，这些液滴会影响后续分析的准确性。',
+              title: '双细胞分布',
+              description: '因在测试数据中选择去除双细胞再进行整合降为分析，所以下图看不到双细胞分布',
               imageGroups: qcFeatureImageGroups.filter(g => g.groupTitle.includes('双细胞'))
             })
           }
@@ -862,7 +863,7 @@ export function loadIntegrateImages() {
           if (qcFeatureImageGroups.some(g => g.groupTitle.includes('关键QC'))) {
             result.sections.push({
               title: '关键QC特征',
-              description: '关键QC特征包括基因数、UMI计数、线粒体基因比例等重要指标，用于评估细胞质量。',
+              // description: '关键QC特征包括基因数、UMI计数、线粒体基因比例等重要指标，用于评估细胞质量。',
               imageGroups: qcFeatureImageGroups.filter(g => g.groupTitle.includes('关键QC'))
             })
           }
@@ -985,9 +986,9 @@ export function loadAnnotationImages() {
           const chineseName = typeMap[cellType] || cellType
 
           result.umapSections.push({
-            tabLabel: chineseName,
+            tabLabel: cellType, //chineseName
             tabName: cellType,
-            title: `${chineseName}Marker`,
+            title: `${cellType} Marker`, //chineseName
             url: imageUrl
           })
         }
@@ -1005,9 +1006,9 @@ export function loadAnnotationImages() {
       else if (filename.includes('cluster') && filename.includes('top9_marker')) {
         const clusterNum = filename.match(/cluster_(\d+)/)?.[1] || '0'
         result.clusterSections.push({
-          tabLabel: `簇${clusterNum}`,
+          tabLabel: `cluster${clusterNum}`,
           tabName: `cluster${clusterNum}`,
-          title: `簇${clusterNum} Top9 Marker`,
+          title: `cluster${clusterNum} Top9 Marker`,
           url: imageUrl
         })
       }
@@ -1061,7 +1062,7 @@ export function loadAnnotationImages() {
 
       if (markerImages.length > 0) {
         umapGroups.push({
-          groupTitle: '各细胞类型Marker基因',
+          groupTitle: '各细胞类型标准Marker基因',
           activeTab: markerImages[0]?.tabName || '',
           images: markerImages,
           caption: '图注：该图展示了各细胞类型的特异性Marker基因在UMAP空间中的分布情况，不同颜色代表不同的细胞类型。'
@@ -1077,7 +1078,7 @@ export function loadAnnotationImages() {
       }
 
       result.umapSections = [{
-        title: '细胞类型Marker',
+        title: '注释结果可视化',
         description: '通过UMAP降维可视化，可以直观地观察不同细胞类型在高维空间中的分布和聚类情况。',
         imageGroups: umapGroups
       }]
@@ -1091,7 +1092,7 @@ export function loadAnnotationImages() {
         title: '各簇Top9 Marker',
         description: '每个细胞簇都有其独特的Marker基因组合，这些基因的高表达定义了该细胞簇的生物学特征。',
         imageGroups: [{
-          groupTitle: `簇0-${result.clusterSections.length - 1} Top9 Marker`,
+          groupTitle: `Cluster0-${result.clusterSections.length - 1} Top9 Marker`,
           activeTab: result.clusterSections[0]?.tabName || '',
           images: result.clusterSections,
           caption: '图注：该图展示了各个细胞簇中表达量最高的9个Marker基因，这些基因是定义该细胞簇的关键特征。'
@@ -1127,7 +1128,7 @@ export function loadAnnotationImages() {
           groupTitle: '矩阵图',
           activeTab: matrixplot[0]?.tabName || '',
           images: matrixplot,
-          caption: '图注：该矩阵图以点阵形式展示了Marker基因在细胞簇中的表达情况，点的颜色和大小代表表达量。'
+          caption: '图注：矩阵图以点阵形式展示了Marker基因在细胞簇中的表达情况，单元格颜色代表表达量。'
         })
       }
 
@@ -1138,10 +1139,10 @@ export function loadAnnotationImages() {
       )
       if (otherHeatmap.length > 0) {
         heatmapGroups.push({
-          groupTitle: '其他热图',
+          groupTitle: '其他图形形式',
           activeTab: otherHeatmap[0]?.tabName || '',
           images: otherHeatmap,
-          caption: '图注：该图展示了Marker基因的多种可视化形式，包括小提琴图、轨迹图、聚类热图等。'
+          caption: '图注：小提琴图、轨迹图展示Marker基因的表达情况。'
         })
       }
 
@@ -1157,18 +1158,18 @@ export function loadAnnotationImages() {
     if (result.correlationSections.length > 0) {
       const correlationGroups = []
 
-      // 细胞类型相关性
-      const celltypeCorrelation = result.correlationSections.filter(img =>
-        img.title.includes('celltype')
-      )
-      if (celltypeCorrelation.length > 0) {
-        correlationGroups.push({
-          groupTitle: '细胞类型相关性分析',
-          activeTab: celltypeCorrelation[0]?.tabName || '',
-          images: celltypeCorrelation,
-          caption: '图注：该图展示了各细胞类型之间的相关性程度，相关性越高表示细胞类型越相似。'
-        })
-      }
+      // 细胞类型相关性（2026.02.04注释PCA相关性不展示）
+      // const celltypeCorrelation = result.correlationSections.filter(img =>
+      //   img.title.includes('celltype')
+      // )
+      // if (celltypeCorrelation.length > 0) {
+      //   correlationGroups.push({
+      //     groupTitle: '细胞类型相关性分析',
+      //     activeTab: celltypeCorrelation[0]?.tabName || '',
+      //     images: celltypeCorrelation,
+      //     caption: '图注：该图展示了各细胞类型之间的相关性程度，相关性越高表示细胞类型越相似。'
+      //   })
+      // }
 
       // 簇与表达相关性（来自06模块的6.5）
       const clusterCorrelation = result.correlationSections.filter(img =>
@@ -1419,11 +1420,11 @@ export function loadQCAnnotationCSV() {
     const result = {
       csvFiles: [
         {
-          title: 'cell_number_before_after_QC',
+          title: '质控前后细胞数量变化统计',
           url: '/src/assets/05.annotation/csv/cell_number_before_after_QC.csv'
         },
         {
-          title: 'doublets_rate',
+          title: '双细胞检测比例统计',
           url: '/src/assets/05.annotation/csv/doublets_rate.csv'
         }
       ]

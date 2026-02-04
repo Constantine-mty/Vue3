@@ -1,7 +1,7 @@
 <template>
   <div class="side-menu" :class="{ collapsed: isCollapsed }">
     <div class="menu-header">
-      <span v-if="!isCollapsed" class="menu-title">导航菜单</span>
+      <span v-if="!isCollapsed" class="menu-title">目录：生物信息分析章节</span>
       <!-- 原代码: :icon="isCollapsed ? Expand : Fold" -->
       <el-button
         circle
