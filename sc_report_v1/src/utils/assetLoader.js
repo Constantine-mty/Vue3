@@ -946,7 +946,8 @@ export function loadAnnotationImages() {
       clusterSections: [],
       heatmapSections: [],
       correlationSections: [], // 新增：相关性分析（包含相关性和簇与表达相关性）
-      dotplotSections: [] // 新增：点图
+      dotplotSections: [], // 新增：点图
+      topMarkerSections: [] // 新增：Top Cluster Marker 可视化
     }
 
     Object.keys(modules).forEach(path => {
@@ -1089,7 +1090,7 @@ export function loadAnnotationImages() {
     // 整理 Cluster 部分
     if (result.clusterSections.length > 0) {
       result.clusterSections = [{
-        title: '各簇Top9 Marker',
+        title: '各簇Top9 Marker UMAP',
         description: '每个细胞簇都有其独特的Marker基因组合，这些基因的高表达定义了该细胞簇的生物学特征。',
         imageGroups: [{
           groupTitle: `Cluster0-${result.clusterSections.length - 1} Top9 Marker`,
@@ -1103,6 +1104,21 @@ export function loadAnnotationImages() {
     }
 
     // 整理热图部分
+    // 先提取需要移到 Top Marker 的 heatmap_Cluster_top10_heatmap_scaled
+    const topClusterHeatmap = result.heatmapSections.filter(img =>
+      img.title.includes('heatmap_Cluster_top10_heatmap_scaled')
+    )
+
+    // 整理点图部分
+    // 先提取需要移到 Top Marker 的 dotplot_cluster_top5_marker
+    const topDotplot = result.dotplotSections.filter(img =>
+      img.title.includes('dotplot_cluster_top5_marker')
+    )
+
+    const remainingDotplot = result.dotplotSections.filter(img =>
+      !img.title.includes('dotplot_cluster_top5_marker')
+    )
+
     if (result.heatmapSections.length > 0) {
       const heatmapGroups = []
 
@@ -1112,7 +1128,7 @@ export function loadAnnotationImages() {
       )
       if (celltypeHeatmap.length > 0) {
         heatmapGroups.push({
-          groupTitle: '细胞类型Marker',
+          groupTitle: '热图',
           activeTab: celltypeHeatmap[0]?.tabName || '',
           images: celltypeHeatmap,
           caption: '图注：该热图展示了各细胞类型的Marker基因表达水平，颜色越深表示表达量越高。'
@@ -1132,10 +1148,11 @@ export function loadAnnotationImages() {
         })
       }
 
-      // 其他热图(violin, tracksplot, cluster heatmap)
+      // 其他热图(violin, tracksplot, cluster heatmap) - 排除 heatmap_Cluster_top10_heatmap_scaled
       const otherHeatmap = result.heatmapSections.filter(img =>
         (img.title.includes('violin') || img.title.includes('tracksplot') ||
-         img.title.includes('Cluster') || img.title.includes('rank_genes'))
+         img.title.includes('rank_genes') ||
+         (img.title.includes('Cluster') && !img.title.includes('heatmap_Cluster_top10_heatmap_scaled')))
       )
       if (otherHeatmap.length > 0) {
         heatmapGroups.push({
@@ -1146,8 +1163,18 @@ export function loadAnnotationImages() {
         })
       }
 
+      // 点图 - 添加到热图可视化中
+      if (remainingDotplot.length > 0) {
+        heatmapGroups.push({
+          groupTitle: '点图',
+          activeTab: remainingDotplot[0]?.tabName || '',
+          images: remainingDotplot,
+          caption: '图注：该点图展示了Marker基因在不同细胞簇中的表达分布，横轴表示细胞簇，纵轴表示基因，点的大小和颜色代表表达量。'
+        })
+      }
+
       result.heatmapSections = [{
-        title: '热图可视化',
+        title: '细胞类型Marker基因可视化',
         imageGroups: heatmapGroups
       }]
     } else {
@@ -1193,20 +1220,26 @@ export function loadAnnotationImages() {
       result.correlationSections = []
     }
 
-    // 整理点图部分
-    if (result.dotplotSections.length > 0) {
-      result.dotplotSections = [{
-        title: '点图',
-        description: '点图展示了Marker基因在不同细胞簇中的表达分布情况，横轴表示细胞簇，纵轴表示基因，点的大小和颜色代表表达量。',
+    // 创建 Top Cluster Marker 可视化小节
+    const topMarkerImages = []
+    if (topClusterHeatmap.length > 0) {
+      topMarkerImages.push(...topClusterHeatmap)
+    }
+    if (topDotplot.length > 0) {
+      topMarkerImages.push(...topDotplot)
+    }
+
+    if (topMarkerImages.length > 0) {
+      result.topMarkerSections = [{
+        title: 'Heatmap/Dotplot可视化',
+        description: 'Top Cluster Marker 的热图和点图展示了各细胞簇标志性基因的表达模式。',
         imageGroups: [{
-          groupTitle: '点图',
-          activeTab: result.dotplotSections[0]?.tabName || '',
-          images: result.dotplotSections,
-          caption: '图注：该点图展示了Marker基因在不同细胞簇中的表达分布，横轴表示细胞簇，纵轴表示基因，点的大小和颜色代表表达量。'
+          groupTitle: 'Top Cluster Marker',
+          activeTab: topMarkerImages[0]?.tabName || '',
+          images: topMarkerImages,
+          caption: '图注：热图展示了各细胞簇Top10 Marker基因的表达水平，颜色越深表示表达量越高。点图展示了各细胞簇Top5 Marker基因的表达分布，点的大小和颜色代表表达量。'
         }]
       }]
-    } else {
-      result.dotplotSections = []
     }
 
     return result
@@ -1261,11 +1294,13 @@ export function loadCompositionalImages() {
           groups.set(prefix, [])
         }
 
+        // 保存文件名中的原始标题，对于 6.6 使用自定义标题
         groups.get(prefix).push({
           tabLabel: title,
           tabName: prefix + '_' + groups.get(prefix).length,
           title: title,
-          url: imageUrl
+          url: imageUrl,
+          originalTitle: title // 保留原始标题
         })
       } else {
         // 特殊图片：MiloR_, OR_, Roe_ 开头
@@ -1298,7 +1333,20 @@ export function loadCompositionalImages() {
       '6.3.1': '比例',
       '6.3.2': '数量',
       '6.4.1': '比例',
-      '6.4.2': '数量'
+      '6.4.2': '数量',
+      '6.6.1': '相关性热图1',
+      '6.6.2': '相关性热图2'
+    }
+
+    // 定义 6.6 的自定义图标题和图注
+    const custom66Titles = {
+      '6.6.1': '相关性热图样式1',
+      '6.6.2': '相关性热图样式2'
+    }
+
+    const custom66Captions = {
+      '6.6.1': '图注：热图展示了不同细胞类型之间在各样本中的比例分布相关性。红色表示正相关，蓝色表示负相关，颜色越深相关性越强。',
+      '6.6.2': '图注：热图展示了不同细胞类型之间在各样本中的比例分布相关性。红色表示正相关，蓝色表示负相关，颜色越深相关性越强。'
     }
 
     // 定义一级分组标题
@@ -1308,8 +1356,7 @@ export function loadCompositionalImages() {
       '6.3': '样本在细胞类型中',
       '6.4': '细胞类型在样本中',
       '6.5': '簇与表达相关性',
-      '6.6.1': '相关性热图1',
-      '6.6.2': '相关性热图2'
+      '6.6': '相关性热图'
     }
 
     // 按一级分组合并图片
@@ -1326,12 +1373,31 @@ export function loadCompositionalImages() {
         mergedGroups.set(mainPrefix, [])
       }
 
-      mergedGroups.get(mainPrefix).push({
-        prefix,
-        subGroupTitle: subGroupTitleMap[prefix] || prefix,
-        images: images,
-        caption: `图注：该图展示了${groupTitleMap[mainPrefix] || mainPrefix}的${subGroupTitleMap[prefix] || prefix}分析结果。`
-      })
+      // 对于 6.6，使用自定义的标题和图注
+      if (mainPrefix === '6.6') {
+        const customTitle = custom66Titles[prefix] || images[0]?.title || subGroupTitleMap[prefix] || prefix
+        const customCaption = custom66Captions[prefix] || `图注：该图展示了${groupTitleMap[mainPrefix] || mainPrefix}的${subGroupTitleMap[prefix] || prefix}分析结果。`
+
+        // 更新每个图片的title为自定义标题
+        const updatedImages = images.map(img => ({
+          ...img,
+          title: customTitle
+        }))
+
+        mergedGroups.get(mainPrefix).push({
+          prefix,
+          subGroupTitle: customTitle,
+          images: updatedImages,
+          caption: customCaption
+        })
+      } else {
+        mergedGroups.get(mainPrefix).push({
+          prefix,
+          subGroupTitle: subGroupTitleMap[prefix] || prefix,
+          images: images,
+          caption: `图注：该图展示了${groupTitleMap[mainPrefix] || mainPrefix}的${subGroupTitleMap[prefix] || prefix}分析结果。`
+        })
+      }
     })
 
     // 构建数据结构 - 6.1-6.4 和 6.6 合并的section
@@ -1348,7 +1414,7 @@ export function loadCompositionalImages() {
       })
 
       // 对于6.6，标题特殊处理
-      const sectionTitle = mainPrefix === '6.6' ? '相关性热图' : `${groupTitleMap[mainPrefix] || mainPrefix}的比例/数量`
+      const sectionTitle = mainPrefix === '6.6' ? '细胞类型间相关性热图分析' : `${groupTitleMap[mainPrefix] || mainPrefix}的比例/数量`
 
       result.sections.push({
         title: sectionTitle,

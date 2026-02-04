@@ -306,11 +306,17 @@
         
 
           <div class="subsection" id="section-05-annotation-cluster">
-            <h2>5.2 Top Cluster Marker 可视化</h2>
+            <h2>5.2 聚类Marker分析</h2>
             <TextBlock text="Marker基因是在特定细胞簇中高表达且在其他簇中低表达的基因，作为细胞注释的重要依据。
             这里展示每个Cluster计算出的Top Marker基因。" />
             <ImageGalleryFullWidth :image-sections="annotationClusterSections" />
             <TextBlock text="Top9 Marker展示了每个细胞簇中表达量最高的9个特征基因。" />
+          </div>
+
+          <div class="subsection" id="section-05-annotation-top-marker">
+            <h2>5.2 Top Cluster Marker 可视化</h2>
+            <TextBlock text="Top Cluster Marker 的热图和点图展示了各细胞簇标志性基因的表达模式。" />
+            <ImageGalleryFullWidth :image-sections="annotationTopMarkerSections" />
           </div>
 
           <div class="subsection" id="section-05-annotation-correlation">
@@ -331,12 +337,6 @@
             <TextBlock text="同时展示多个基因在多个细胞簇中的表达水平，颜色深浅代表表达量高低。
             log1p代表用标准化后的实际表达量进行热图绘制；scale表示在热图中对每个基因进行Zscore缩放(放大差异)。" />
             <ImageGalleryFullWidth :image-sections="annotationHeatmapSections" />
-          </div>
-
-          <div class="subsection" id="section-05-annotation-dotplot">
-            <h2>5.5 点图</h2>
-            <TextBlock text="点图展示了Marker基因在不同细胞簇中的表达分布情况，横轴表示细胞簇，纵轴表示基因，点的大小和颜色代表表达量。" />
-            <ImageGalleryFullWidth :image-sections="annotationDotplotSections" />
           </div>
         </section>
         <!-- 06.compositional 模块 -->
@@ -487,10 +487,10 @@ const menuData = ref([
     items: [
       { id: 'section-05-annotation-table', title: '5.1 Marker基因表' },
       { id: 'section-05-annotation-cluster', title: '5.2 聚类Marker分析' },
+      { id: 'section-05-annotation-top-marker', title: '5.2 Top Cluster Marker 可视化' },
       { id: 'section-05-annotation-umap-content', title: '5.3 细胞类型注释' },
-      { id: 'section-05-annotation-heatmap', title: '5.4 Marker基因热图' },
-      { id: 'section-05-annotation-correlation', title: '5.5 相关性分析' },
-      { id: 'section-05-annotation-dotplot', title: '5.6 点图' }
+      { id: 'section-05-annotation-heatmap', title: '5.4 细胞类型Marker基因展示' },
+      { id: 'section-05-annotation-correlation', title: '5.5 相关性分析' }
     ]
   },
   {
@@ -501,7 +501,7 @@ const menuData = ref([
       { id: 'section-06-compositional-sample', title: '簇在样本中的比例/数量' },
       { id: 'section-06-compositional-celltype', title: '样本在细胞类型中的比例/数量' },
       { id: 'section-06-compositional-celltype-sample', title: '细胞类型在样本中的比例/数量' },
-      { id: 'section-06-compositional-heatmap', title: '相关性热图' },
+      { id: 'section-06-compositional-heatmap', title: '细胞类型间相关性热图分析' },
       { id: 'section-06-compositional-milor', title: 'MiloR分析' },
       { id: 'section-06-compositional-or', title: 'Odds Ratio分析' },
       { id: 'section-06-compositional-roe', title: 'Roe分析' }
@@ -667,6 +667,7 @@ const predictionStarcatSection = computed(() => predictionImageSections.value.fi
 const annotationData = loadAnnotationImages()
 const annotationUMAPSections = ref(annotationData.umapSections)
 const annotationClusterSections = ref(annotationData.clusterSections)
+const annotationTopMarkerSections = ref(annotationData.topMarkerSections)
 
 // 热图、相关性分析和点图数据已经在 assetLoader.js 中组织好了
 const annotationHeatmapSections = ref(annotationData.heatmapSections)
@@ -682,7 +683,7 @@ const compositionalClusterSection = computed(() => compositionalSections.value.f
 const compositionalSampleSection = computed(() => compositionalSections.value.find(s => s.title.includes('簇在样本中')))
 const compositionalCelltypeSection = computed(() => compositionalSections.value.find(s => s.title.includes('样本在细胞类型中')))
 const compositionalCelltypeSampleSection = computed(() => compositionalSections.value.find(s => s.title.includes('细胞类型在样本中')))
-const compositionalHeatmapSection = computed(() => compositionalSections.value.find(s => s.title === '相关性热图'))
+const compositionalHeatmapSection = computed(() => compositionalSections.value.find(s => s.title === '细胞类型间相关性热图分析'))
 const compositionalMilorSection = computed(() => compositionalSections.value.find(s => s.title === 'MiloR分析'))
 const compositionalORSection = computed(() => compositionalSections.value.find(s => s.title === 'Odds Ratio分析'))
 const compositionalRoeSection = computed(() => compositionalSections.value.find(s => s.title === 'Roe分析'))
