@@ -6,7 +6,7 @@
         <div class="logo-area">
           <!-- <div class="logo-icon">🧬</div> -->
           <img src="/src/assets/img/logo.jpg" alt="Logo" class="logo-img" />
-          <h1>单细胞转录组分析报告</h1>
+          <h1>单细胞转录组基础分析报告 Part I</h1>
         </div>
       </div>
     </div>
@@ -14,13 +14,23 @@
     <div class="main-content">
       <!-- 左侧导航 -->
       <SideMenu
-        :menu-data="menuData"
+        :menu-data="computedMenuData"
         :active-section="activeSection"
         @menu-select="handleMenuSelect"
       />
 
       <!-- 右侧内容区域 - 全部显示 -->
       <div class="content-area" id="content-area">
+
+        <section id="section-01-load" class="report-section"> 
+          <h1>基础分析报告Part1</h1>
+          <TextBlock text="单细胞基础分析流程一共分为两部分: 
+          1. 原始数据到细胞注释完成以及细胞类型组分分析; 
+          2. 确定细胞注释后，再进行差异分析与基因集分析 
+          基础分析报告Part I 展示的是‘原始数据到细胞注释完成以及细胞类型组分分析’的内容。
+          客户确定下来细胞注释结果后, 才会进行基础分析第二部分的分析以及报告输出"/>
+        </section>
+
         <!-- 01.load 模块 -->
         <section id="section-01-load" class="report-section">
           <h1>01. 数据分布情况</h1>
@@ -262,31 +272,25 @@
 
         <!-- 04.prediction 模块 -->
         <section id="section-04-prediction" class="report-section">
-          <h2>04. 细胞预测</h2>
-          <TextBlock text="细胞预测利用已建立的细胞类型参考数据库，自动识别每个细胞的潜在类型，为后续注释提供重要参考。" />
+          <h1>04. 细胞预测</h1>
+          <TextBlock text="细胞预测利用已建立的细胞类型参考模型数据集，自动识别每个细胞的潜在类型，为后续注释提供重要参考。" />
 
-          <!-- CellTypist预测 -->
-          <div class="subsection" id="section-04-prediction-celltypist">
-            <h3>CellTypist预测</h3>
-            <TextBlock text="CellTypist是一种基于机器学习的细胞类型预测工具，利用预训练的免疫细胞参考数据库进行预测。" />
-            <ImageGallery v-if="predictionCellTypistSection" :image-sections="[predictionCellTypistSection]" />
+          <TextBlock text="CellTypist 是一种基于监督学习的单细胞自动注释方法，采用大规模人工标注的参考数据集训练得到的逻辑回归分类模型，对单细胞转录组数据进行细胞类型预测。该方法以基因表达矩阵为输入，通过比较待注释细胞与已知细胞类型特征之间的模式相似性，为每个细胞分配最可能的细胞类型标签及其置信度分数。CellTypist 对免疫细胞体系尤其友好，能够在保持较高注释一致性的同时，对细粒度亚群进行快速、可扩展的注释，适用于大规模单细胞数据的初步和系统性细胞类型判定。" />
+
+          <TextBlock text="SingleR 是一种基于参考表达谱相似度的单细胞注释方法，其核心思想是将待注释细胞的表达特征与已知细胞类型的参考数据进行逐一比较。SingleR 通过计算单细胞与参考数据集中各细胞类型之间的相关性或距离，并基于逐步筛选（iterative refinement）的策略，最终为每个细胞分配最匹配的细胞类型标签。该方法对参考数据依赖明确、解释性较强，适用于在已有可靠参考注释的前提下，对单细胞数据进行稳健、可追溯的细胞类型注释，常作为自动注释结果的验证或补充手段。" />
+
+          <!-- 动态渲染各种预测方法 -->
+          <div
+            v-for="(section, index) in predictionImageSections"
+            :key="`prediction-${index}`"
+            class="subsection"
+            :id="`section-04-prediction-${index}`"
+          >
+            <h2>{{ section.title }}</h2>
+            <ImageGalleryFullWidth :image-sections="[section]" />
           </div>
 
-          <!-- SCimilarity预测 -->
-          <div class="subsection" id="section-04-prediction-scimilarity">
-            <h3>SCimilarity预测</h3>
-            <TextBlock text="SCimilarity基于相似性度量进行细胞类型预测，适用于未知细胞类型的快速鉴定。" />
-            <ImageGallery v-if="predictionSCimilaritySection" :image-sections="[predictionSCimilaritySection]" />
-          </div>
-
-          <!-- starCAT预测 -->
-          <div class="subsection" id="section-04-prediction-starcat">
-            <h3>starCAT预测</h3>
-            <TextBlock text="starCAT专门用于T细胞亚型的预测，利用T细胞受体（TCR）序列进行细胞类型鉴定。" />
-            <ImageGallery v-if="predictionStarcatSection" :image-sections="[predictionStarcatSection]" />
-          </div>
-
-          <TextBlock text="CellTypist、SCimilarity、starCAT等方法各有优势，综合多种预测结果可以提高注释准确性。" />
+          <TextBlock text="多种预测方法各有优势，综合多种预测结果可以提高注释准确性。" />
         </section>
 
         <!-- 05.annotation 模块 -->
@@ -301,23 +305,23 @@
             <h2>5.1 Cluster Marker基因表</h2>
             <TextBlock text="scanpy.tl.rank_genes_groups函数对每个Cluster计算特征基因；
             表格详细列出了每个细胞簇的Marker基因信息，包括基因名称、表达变化倍率、统计显著性等指标。" />
-            <DataTable csv-path="/src/assets/05.annotation/csv/Scanpy_markers_per_cluster.csv" caption="表注：p_val_adj表示校正后的p值，logFC表示对数 fold change，pts表示基因在该簇的表达比例，pts_rest表示该基因在其他簇的表达比例" />
+            <DataTable csv-path="/src/assets/05.annotation/csv/Scanpy_markers_per_cluster.csv" :search-columns="['cluster', 'gene']" caption="表注：p_val_adj表示校正后的p值，logFC表示对数 fold change，pts表示基因在该簇的表达比例，pts_rest表示该基因在其他簇的表达比例" />
           </div>
         
 
           <div class="subsection" id="section-05-annotation-cluster">
-            <h2>5.2 聚类Marker分析</h2>
+            <h2>5.2 Top Cluster Marker 可视化</h2>
             <TextBlock text="Marker基因是在特定细胞簇中高表达且在其他簇中低表达的基因，作为细胞注释的重要依据。
             这里展示每个Cluster计算出的Top Marker基因。" />
             <ImageGalleryFullWidth :image-sections="annotationClusterSections" />
-            <TextBlock text="Top9 Marker展示了每个细胞簇中表达量最高的9个特征基因。" />
+            <ImageGalleryFullWidth :image-sections="annotationTopMarkerSections" />
           </div>
 
-          <div class="subsection" id="section-05-annotation-top-marker">
+          <!-- <div class="subsection" id="section-05-annotation-top-marker">
             <h2>5.2 Top Cluster Marker 可视化</h2>
             <TextBlock text="Top Cluster Marker 的热图和点图展示了各细胞簇标志性基因的表达模式。" />
             <ImageGalleryFullWidth :image-sections="annotationTopMarkerSections" />
-          </div>
+          </div> -->
 
           <div class="subsection" id="section-05-annotation-correlation">
             <h2>5.3 Cluster 表达相关性分析</h2>
@@ -431,7 +435,7 @@ import {
   loadCompositionalImages
 } from './utils/assetLoader.js'
 
-// 菜单数据(按01-05模块组织,包含h3子章节)
+// 菜单数据(按01-06模块组织,包含h3子章节)
 const menuData = ref([
   {
     id: '01-load',
@@ -458,39 +462,18 @@ const menuData = ref([
     id: '03-integrate',
     title: '03. 数据整合',
     items: [
-      { id: 'section-03-integrate-overlap', title: '基因重叠分析' },
-      { id: 'section-03-integrate-hvg', title: 'HVG选择' },
-      { id: 'section-03-integrate-violin', title: '质控整合后各样本数据分布情况' },
+      // { id: 'section-03-integrate-overlap', title: '数据合并' },
+      { id: 'section-03-integrate-violin', title: '数据合并' },
+      { id: 'section-03-integrate-hvg', title: '高可变基因HVG选择' },
       { id: 'section-03-integrate-pca', title: 'PCA分析' },
       { id: 'section-03-integrate-unintegrate', title: '未去批次效应降维情况' },
-      { id: 'section-03-integrate-batch', title: '批次效应矫正后降维结果' },
-      { id: 'section-03-integrate-cluster', title: '聚类分析' },
-      { id: 'section-03-integrate-grid', title: '聚类网格' },
+      { id: 'section-03-integrate-batch', title: '批次效应矫正' },
+      { id: 'section-03-integrate-cluster', title: 'Leiden聚类分析' },
+      { id: 'section-03-integrate-grid', title: '聚类结果汇总展示' },
+      { id: 'section-03-integrate-tree', title: 'Clustree聚类树展示' },
       { id: 'section-03-integrate-qc-cellcycle', title: '细胞周期分析' },
-      { id: 'section-03-integrate-qc-doublets', title: '双细胞检测' },
-      { id: 'section-03-integrate-qc-key', title: '关键QC特征' },
-      { id: 'section-03-integrate-tree', title: '聚类树' }
-    ]
-  },
-  {
-    id: '04-prediction',
-    title: '04. 细胞预测',
-    items: [
-      { id: 'section-04-prediction-celltypist', title: 'CellTypist预测' },
-      { id: 'section-04-prediction-scimilarity', title: 'SCimilarity预测' },
-      { id: 'section-04-prediction-starcat', title: 'starCAT预测' }
-    ]
-  },
-  {
-    id: '05-annotation',
-    title: '05. 细胞注释',
-    items: [
-      { id: 'section-05-annotation-table', title: '5.1 Marker基因表' },
-      { id: 'section-05-annotation-cluster', title: '5.2 聚类Marker分析' },
-      { id: 'section-05-annotation-top-marker', title: '5.2 Top Cluster Marker 可视化' },
-      { id: 'section-05-annotation-umap-content', title: '5.3 细胞类型注释' },
-      { id: 'section-05-annotation-heatmap', title: '5.4 细胞类型Marker基因展示' },
-      { id: 'section-05-annotation-correlation', title: '5.5 相关性分析' }
+      { id: 'section-03-integrate-qc-doublets', title: '双细胞分布' },
+      { id: 'section-03-integrate-qc-key', title: '关键QC特征分布' }
     ]
   },
   {
@@ -501,13 +484,50 @@ const menuData = ref([
       { id: 'section-06-compositional-sample', title: '簇在样本中的比例/数量' },
       { id: 'section-06-compositional-celltype', title: '样本在细胞类型中的比例/数量' },
       { id: 'section-06-compositional-celltype-sample', title: '细胞类型在样本中的比例/数量' },
-      { id: 'section-06-compositional-heatmap', title: '细胞类型间相关性热图分析' },
+      { id: 'section-06-compositional-heatmap', title: '细胞类型在样本间分布相关性' },
       { id: 'section-06-compositional-milor', title: 'MiloR分析' },
       { id: 'section-06-compositional-or', title: 'Odds Ratio分析' },
       { id: 'section-06-compositional-roe', title: 'Roe分析' }
     ]
   }
 ])
+
+// 动态生成04和05模块的菜单项
+const computedMenuData = computed(() => {
+  const staticMenu = [...menuData.value]
+
+  // 在03模块后插入04模块
+  const predictionItems = predictionImageSections.value.map((section, index) => ({
+    id: `section-04-prediction-${index}`,
+    title: section.title
+  }))
+
+  const predictionModule = {
+    id: '04-prediction',
+    title: '04. 细胞预测',
+    items: predictionItems
+  }
+
+  staticMenu.splice(3, 0, predictionModule)
+
+  // 在04模块后插入05模块
+  const annotationModule = {
+    id: '05-annotation',
+    title: '05. 细胞注释',
+    items: [
+      { id: 'section-05-annotation-table', title: 'Marker基因表' },
+      { id: 'section-05-annotation-cluster', title: 'Top Cluster Marker 可视化' },
+      // { id: 'section-05-annotation-top-marker', title: '5.2 Top Cluster Marker 可视化' },
+      { id: 'section-05-annotation-correlation', title: '相关性分析' },
+      { id: 'section-05-annotation-umap-content', title: '细胞类型注释' },
+      { id: 'section-05-annotation-heatmap', title: '细胞类型Marker基因展示' }
+    ]
+  }
+
+  staticMenu.splice(4, 0, annotationModule)
+
+  return staticMenu
+})
 
 // 当前激活的章节
 const activeSection = ref('')
@@ -654,14 +674,9 @@ const integrateQCDoubletsSection = computed(() => integrateImageSections.value.f
 const integrateQCKeySection = computed(() => integrateImageSections.value.find(s => s.title === '关键QC特征'))
 const integrateTreeSection = computed(() => integrateImageSections.value.find(s => s.title === '聚类树'))
 
-// 04.prediction 图片数据 (保持静态)
+// 04.prediction 图片数据 (动态加载)
 const predictionData = loadPredictionImages()
 const predictionImageSections = ref(predictionData.sections)
-
-// 04.prediction 各个section的ref（用于单独显示）
-const predictionCellTypistSection = computed(() => predictionImageSections.value.find(s => s.title === 'CellTypist预测'))
-const predictionSCimilaritySection = computed(() => predictionImageSections.value.find(s => s.title === 'SCimilarity预测'))
-const predictionStarcatSection = computed(() => predictionImageSections.value.find(s => s.title === 'starCAT预测'))
 
 // 05.annotation 图片数据
 const annotationData = loadAnnotationImages()

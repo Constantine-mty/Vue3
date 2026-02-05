@@ -4,6 +4,7 @@
 
 sc_report_v1/node_modules/
 sc_report_v1/src/assets
+sc_report_v1/public/
 
 # 构建输出
 dist/

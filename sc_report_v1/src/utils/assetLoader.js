@@ -889,41 +889,80 @@ export function loadIntegrateImages() {
 }
 
 /**
- * 获取 04.prediction 模块的图片数据 (保持原状)
+ * 获取 04.prediction 模块的图片数据
  */
 export function loadPredictionImages() {
-  // 04.prediction 暂时保持静态配置
-  return {
-    title: '细胞预测',
-    sections: [
-      {
-        title: 'CellTypist预测',
+  try {
+    // 筛选出 04.prediction 相关的图片
+    const modules = Object.fromEntries(
+      Object.entries(loadModules).filter(([path]) => path.includes('/04.prediction/'))
+    )
+
+    const result = {
+      title: '细胞预测',
+      sections: []
+    }
+
+    // 按方法分组（第一个下划线前是方法名）
+    const methodGroups = new Map()
+
+    Object.keys(modules).forEach(path => {
+      const parsed = parseFilePath(path)
+      if (!parsed.isImage) return
+
+      const filename = parsed.filename
+
+      // 文件名格式: Method_Model.png/pdf
+      // 例如: CellTypist_Immune_Low.png, SingleR_HPCA_Fine.png
+      const match = filename.match(/^([^_]+)_(.+)\.(png|jpg|jpeg|svg|webp|pdf)$/i)
+
+      if (!match) return
+
+      const [, method, modelInfo] = match
+      const imageUrl = modules[path].default
+
+      // 将模型信息转换为标签（替换下划线为空格）
+      const modelLabel = modelInfo.replace(/_/g, ' ')
+
+      // 如果方法不存在，创建新的分组
+      if (!methodGroups.has(method)) {
+        methodGroups.set(method, [])
+      }
+
+      // 添加图片到对应方法的分组
+      methodGroups.get(method).push({
+        tabLabel: modelLabel,
+        tabName: modelLabel,
+        title: `${method} - ${modelLabel}`,
+        url: imageUrl
+      })
+    })
+
+    // 为每个方法创建一个section
+    Array.from(methodGroups.entries()).forEach(([method, images]) => {
+      // 对图片排序（按模型名称字母顺序）
+      const sortedImages = images.sort((a, b) => a.tabLabel.localeCompare(b.tabLabel))
+
+      const section = {
+        title: `${method}预测`,
         imageGroups: [{
-          groupTitle: 'CellTypist预测结果',
-          activeTab: 'default',
-          images: [{ tabLabel: '待补充', tabName: 'default', title: 'CellTypist预测结果', url: '/src/assets/img/test1.png' }],
-          caption: '图注：CellTypist是一种基于机器学习的细胞类型预测工具，利用预训练的免疫细胞参考数据库进行预测。'
-        }]
-      },
-      {
-        title: 'SCimilarity预测',
-        imageGroups: [{
-          groupTitle: 'SCimilarity预测结果',
-          activeTab: 'default',
-          images: [{ tabLabel: '待补充', tabName: 'default', title: 'SCimilarity预测结果', url: '/src/assets/img/test1.png' }],
-          caption: '图注：SCimilarity基于相似性度量进行细胞类型预测，适用于未知细胞类型的快速鉴定。'
-        }]
-      },
-      {
-        title: 'starCAT预测',
-        imageGroups: [{
-          groupTitle: 'starCAT预测结果',
-          activeTab: 'default',
-          images: [{ tabLabel: '待补充', tabName: 'default', title: 'starCAT预测结果', url: '/src/assets/img/test1.png' }],
-          caption: '图注：starCAT专门用于T细胞亚型的预测，利用T细胞受体（TCR）序列进行细胞类型鉴定。'
+          groupTitle: `${method}预测结果`,
+          activeTab: sortedImages[0]?.tabName || '',
+          images: sortedImages,
+          caption: `图注：${method}是一种细胞类型预测方法，用于将细胞注释到已知的细胞类型。`
         }]
       }
-    ]
+
+      result.sections.push(section)
+    })
+
+    // 按方法名称排序section
+    result.sections.sort((a, b) => a.title.localeCompare(b.title))
+
+    return result
+  } catch (error) {
+    console.error('加载 04.prediction 图片失败:', error)
+    return { title: '细胞预测', sections: [] }
   }
 }
 
@@ -1089,13 +1128,20 @@ export function loadAnnotationImages() {
 
     // 整理 Cluster 部分
     if (result.clusterSections.length > 0) {
+      // 按cluster编号排序（cluster0, cluster1, cluster2...）
+      const sortedClusters = [...result.clusterSections].sort((a, b) => {
+        const numA = parseInt(a.tabName.replace('cluster', ''))
+        const numB = parseInt(b.tabName.replace('cluster', ''))
+        return numA - numB
+      })
+
       result.clusterSections = [{
         title: '各簇Top9 Marker UMAP',
         description: '每个细胞簇都有其独特的Marker基因组合，这些基因的高表达定义了该细胞簇的生物学特征。',
         imageGroups: [{
-          groupTitle: `Cluster0-${result.clusterSections.length - 1} Top9 Marker`,
-          activeTab: result.clusterSections[0]?.tabName || '',
-          images: result.clusterSections,
+          groupTitle: `Cluster0-${sortedClusters.length - 1} Top9 Marker`,
+          activeTab: sortedClusters[0]?.tabName || '',
+          images: sortedClusters,
           caption: '图注：该图展示了各个细胞簇中表达量最高的9个Marker基因，这些基因是定义该细胞簇的关键特征。'
         }]
       }]
