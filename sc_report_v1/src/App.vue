@@ -115,19 +115,19 @@
           <div v-if="qcCSVData.csvFiles.length > 0 && qcCSVData.csvFiles[0]" class="subsection" id="section-02-qc-csv-1">
             <h2>{{ qcCSVData.csvFiles[0].title }}</h2>
             <TextBlock text="表格展示了质量控制前后各样本的细胞数量变化情况，包括过滤前的原始细胞数和过滤后的高质量细胞数。" />
-            <DataTable :csv-path="qcCSVData.csvFiles[0].url" caption="表注：cell_number_beforeQC 表示过滤前的细胞数，cell_number_afterQC表示过滤后的细胞数。" />
+            <DataTable :csv-data="qcCSVData.csvFiles[0].csvData" caption="表注：cell_number_beforeQC 表示过滤前的细胞数，cell_number_afterQC表示过滤后的细胞数。" />
           </div>
 
           <div v-if="qcCSVData.csvFiles.length > 1 && qcCSVData.csvFiles[1]" class="subsection" id="section-02-qc-csv-2">
             <h2>{{ qcCSVData.csvFiles[1].title }}</h2>
-            
+
             <TextBlock text="双细胞（doublet） 指的是在同一个细胞条形码（barcode）下测序到的两个细胞，例如两个细胞在建库过程中被同时捕获进了同一个液滴（droplet）。
             根据组成细胞的类型，双细胞可分为两类：
               •	同型双细胞（homotypic doublet）：由相同细胞类型组成（但可能来自不同个体）
               •	异型双细胞（heterotypic doublet）：由不同细胞类型或不同细胞状态组成
             同型双细胞通常难以仅凭表达矩阵进行识别，而且在很多情况下被认为对分析影响较小（innocuous），因为它们可以通过 cell hashing 或 SNP 信息加以区分。因此，同型双细胞并不是大多数双细胞检测方法的主要识别目标。
           相比之下，由不同细胞类型或状态构成的异型双细胞更为关键。这类双细胞极有可能被错误注释，并对下游分析产生显著干扰，因此双细胞的检测与去除通常是数据预处理阶段的关键步骤之一。" />
-                  
+
             <TextBlock text="双细胞的识别方法
             双细胞可以通过以下两种主要方式进行识别：
               1.	基于统计特征的方法
@@ -139,7 +139,7 @@
             Xi 和 Li（2021） 对九种不同的双细胞检测方法进行了系统评测，从计算效率和检测准确性两个方面对其性能进行了比较。
             结果显示srublet方法在双细胞检测准确性方面表现优秀，同时具有良好的计算效率和稳定性。" />
             <TextBlock text="使用scrublet对每个样本进行双细胞预测，表格展示了各样本的双细胞率检测结果" />
-            <DataTable :csv-path="qcCSVData.csvFiles[1].url" caption="表注：doublet_rate_expect表示根据样本实际细胞数量，先验估计双细胞比例；doublet_rate_estimated表示实际双细胞检测率。" />
+            <DataTable :csv-data="qcCSVData.csvFiles[1].csvData" caption="表注：doublet_rate_expect表示根据样本实际细胞数量，先验估计双细胞比例；doublet_rate_estimated表示实际双细胞检测率。" />
           </div>
         </section>
 
@@ -305,7 +305,7 @@
             <h2>5.1 Cluster Marker基因表</h2>
             <TextBlock text="scanpy.tl.rank_genes_groups函数对每个Cluster计算特征基因；
             表格详细列出了每个细胞簇的Marker基因信息，包括基因名称、表达变化倍率、统计显著性等指标。" />
-            <DataTable csv-path="/src/assets/05.annotation/csv/Scanpy_markers_per_cluster.csv" :search-columns="['cluster', 'gene']" caption="表注：p_val_adj表示校正后的p值，logFC表示对数 fold change，pts表示基因在该簇的表达比例，pts_rest表示该基因在其他簇的表达比例" />
+            <DataTable :search-columns="['cluster', 'gene']" caption="表注：p_val_adj表示校正后的p值，logFC表示对数 fold change，pts表示基因在该簇的表达比例，pts_rest表示该基因在其他簇的表达比例" />
           </div>
         
 

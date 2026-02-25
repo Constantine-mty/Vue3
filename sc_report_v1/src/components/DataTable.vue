@@ -75,11 +75,12 @@
 import { ref, computed, onMounted } from 'vue'
 import Papa from 'papaparse'
 import { Search } from '@element-plus/icons-vue'
+import { scanpyMarkersCSV } from '../assets/csv-bundle.js'
 
 const props = defineProps({
-  csvPath: {
+  csvData: {
     type: String,
-    default: '/src/assets/Scanpy_markers_per_cluster.csv'
+    default: scanpyMarkersCSV // 默认使用内联的 CSV 数据
   },
   caption: {
     type: String,
@@ -189,11 +190,10 @@ const handleSizeChange = (size) => {
   currentPage.value = 1
 }
 
-// 加载CSV数据
+// 加载CSV数据 - 直接使用内联的 CSV 字符串
 const loadCSVData = () => {
-  Papa.parse(props.csvPath, {
+  Papa.parse(props.csvData, {
     header: true,
-    download: true,
     complete: (results) => {
       // 获取表头作为列
       const headers = results.meta.fields || []

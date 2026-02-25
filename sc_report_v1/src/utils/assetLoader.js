@@ -1527,17 +1527,19 @@ export function loadCompositionalImages() {
 /**
  * 获取 02.qc 章节需要的 CSV 文件（来自 05.annotation/csv）
  */
+import { cellNumberQC, doubletsRate } from '../assets/csv-bundle.js'
+
 export function loadQCAnnotationCSV() {
   try {
     const result = {
       csvFiles: [
         {
           title: '质控前后细胞数量变化统计',
-          url: '/src/assets/05.annotation/csv/cell_number_before_after_QC.csv'
+          csvData: cellNumberQC
         },
         {
           title: '双细胞检测比例统计',
-          url: '/src/assets/05.annotation/csv/doublets_rate.csv'
+          csvData: doubletsRate
         }
       ]
     }
